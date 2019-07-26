@@ -1,29 +1,74 @@
 ﻿
 using System;
 using NUnit.Framework;
+using SubwayConnect;
+using System.Collections.Generic;
 
-namespace UnitTest
+namespace SubwayConnectUnitTest
 {
     [TestFixture]
-    public class MyTest
+    public class MTAInfoUnitTest
     {
         [Test]
-        public void Pass()
+        public void MTAInfoInitUnitTest()
         {
+            try
+            {
+                Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+                List<string> T = new List<string>() { "FeedID.json", "json" };
+                dict.Add("FeedID", T);
+                MTAInfo mTAInfo = new MTAInfo(dict);
+            }
+            catch (Exception)
+            {
+                Assert.False(true);
+            }
             Assert.True(true);
         }
 
         [Test]
-        public void Fail()
+        public void GetFeedIDUnitTest()
         {
-            Assert.False(true);
+            Dictionary<string, List<string>> dict = new Dictionary<string, List<string>>();
+            List<string> T = new List<string>() { "FeedID.json", "json"};
+            dict.Add("FeedID", T);
+            MTAInfo mTAInfo = new MTAInfo(dict);
+
+            Assert.True(string.Equals(mTAInfo.GetFeedIDInfo("A123").Abb,"ACE"));
+            Assert.True(string.Equals(mTAInfo.GetFeedIDInfo("B123").Abb, "BDFM"));
+            Assert.True(string.Equals(mTAInfo.GetFeedIDInfo("Q123").Abb, "NRQW"));
         }
 
         [Test]
-        [Ignore("another time")]
-        public void Ignore()
+        public void MTAInfoInitUnitTestViaResUnitTest()
+            {
+                MTAInfo mTAInfo = new MTAInfo("ResSummary.json");
+                Assert.True(string.Equals(mTAInfo.GetFeedIDInfo("A123").Abb, "ACE"));
+                Assert.True(string.Equals(mTAInfo.GetFeedIDInfo("B123").Abb, "BDFM"));
+                Assert.True(string.Equals(mTAInfo.GetFeedIDInfo("Q123").Abb, "NRQW"));
+            }
+        [Test]
+        public void GetFeedURLUnitTest()
         {
-            Assert.True(false);
+            MTAInfo mTAInfo = new MTAInfo("ResSummary.json");
+            Assert.True(string.Equals(mTAInfo.GetFeedURL("A123"),
+                "http://datamine.mta.info/mta_esi.php?key=b12af9a5fd7d6665a230010a00d63ca4&feed_id=26"));
+        }
+
+        [Test]
+        public void GetStationUnitTest()
+        {
+            try
+            {
+                MTAInfo mTAInfo = new MTAInfo("ResSummary.json");
+                Assert.True(string.Equals(mTAInfo.GetStationInfo("101").Name, "Van Cortlandt Park - 242 St"));
+            }
+            catch (Exception e)
+            {
+                Assert.True(false);
+            }
+
+            
         }
     }
 }
