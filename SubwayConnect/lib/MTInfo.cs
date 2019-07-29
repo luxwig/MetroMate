@@ -12,15 +12,64 @@ using System.Collections;
 using System.IO;
 using CsvHelper.Configuration.Attributes;
 using System.Linq;
+using System.Net;
 
-namespace SubwayConnect
+namespace MetroMate
 {
+    public class StationInfo
+    {
+        [Name("stop_id")]
+        public string ID { get; set; }
+
+        [Name("stop_name")]
+        public string Name { get; set; }
+
+        [Name("parent_station")]
+        public string Parents { get; set; }
+        public StationInfo()
+        {
+            ID = ""; Name = ""; Parents = "";
+        }
+        public StationInfo(string id, string name, string parents)
+        {
+            ID = id;
+            Name = name;
+            Parents = parents;
+        }
+    }
+    /*
+    public class TripInfoGroup
+    {
+        public struct URLMap
+        {
+            public URLMap(string URL, string stop)
+            {
+                this.URL = URL;
+                this.stop = stop;
+            }
+            string stop, URL;
+        }
+        
+        List<TripInfo> TripInfos;
+        Dictionary<string, FeedMessage> MessageMap;
+        public TripInfoGroup(List<string> URL, List<URLMap> urlmap)
+        {
+            MessageMap = new Dictionary<string, FeedMessage>();
+            TripInfos = new List<TripInfo>();
+            foreach (string url in URL)
+            {
+                MessageMap.Add(url, GetFeed(url));
+            }
+            foreach (URLMap u in urlmap)
+            {
+
+            }
+        }
+    }
+
+    */
     public class TripInfo : IComparable, IComparable<TripInfo>
     {
-        public TripInfo()
-        {
-
-        }
         public TripInfo(int index, StopTimeUpdate[] stopTime, string refStop, string id)
         {
             Index = index;
@@ -74,6 +123,92 @@ namespace SubwayConnect
         }
     }
 
+
+    public class RTInfos
+    {
+        private struct FeedMessageCashe
+        {
+            public FeedMessage Feed;
+            public DateTime Timestamp;
+            public FeedMessageCashe(FeedMessage Feed, DateTime Timestamp) { this.Feed = Feed; this.Timestamp = Timestamp; }
+        }
+        private MTAInfo src;
+        public RTInfos(MTAInfo src)
+        {
+            this.src = src;
+            CacheFeed = new Dictionary<string, FeedMessageCashe>();
+        }
+        private static FeedMessage GetFeed(string path)
+        {
+            var req = WebRequest.Create(path);
+            HttpWebResponse response = null;
+            Stream dataStream = null;
+            FeedMessage feed = null;
+            try
+            {
+                response = (HttpWebResponse)req.GetResponse();
+                dataStream = response.GetResponseStream();
+                feed = Serializer.Deserialize<FeedMessage>(dataStream);
+            }
+            finally
+            {
+                dataStream.Close();
+                response.Close();
+            }
+            return feed;
+        }
+        private Dictionary<string, FeedMessageCashe> CacheFeed;
+
+
+
+        private static List<TripInfo> GetTripInfos(
+            FeedMessage feed, string SEEKING_STOP)
+        {
+            List<TripInfo> tripInfos = new List<TripInfo>();
+            foreach (FeedEntity ent in feed.Entities)
+            {
+                if (ent.TripUpdate != null &&
+                    ent.TripUpdate.StopTimeUpdates.Count != 0)
+                {
+                    int i = 0;
+                    foreach (StopTimeUpdate stopTimeUpdate in ent.TripUpdate.StopTimeUpdates)
+                    {
+                        if (string.Equals(stopTimeUpdate.StopId, SEEKING_STOP))
+                        {
+                            tripInfos.Add(new TripInfo(i, ent.TripUpdate.StopTimeUpdates.ToArray(), SEEKING_STOP, ent.TripUpdate.Trip.TripId));
+                            break;
+                        }
+                        i += 1;
+                    }
+
+                }
+            }
+            return tripInfos;
+        }
+
+
+        // Refreshflag: 0 Auto, 1 Force Refresh, 2 Force not Refresh
+
+        public List<TripInfo> QueryByStation(List<string> Stations, int RefreshFlag = 0)
+        {
+            List<TripInfo> r = new List<TripInfo>();
+            foreach (string station in Stations)
+            {
+                string url = src.GetFeedURL(station);
+                if (CacheFeed.ContainsKey(url))
+                    Console.WriteLine("Cashe Time {0}", (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds);
+                if (!CacheFeed.ContainsKey(url) || (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30)
+                {
+                    Console.WriteLine("Refreshing {0}", url);
+                    FeedMessage feed = GetFeed(url);
+                    CacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
+                }
+                r.AddRange(GetTripInfos(CacheFeed[url].Feed, station));
+            }
+            r.Sort();
+            return r;
+        }
+    }
     public class MTAInfo
     {
 
@@ -126,24 +261,6 @@ namespace SubwayConnect
         private readonly Dictionary<string, StationInfo> m_station_map;
         private readonly Hashtable m_station_name;
 
-
-        public struct StationInfo
-        {
-            [Name("stop_id")]
-            public string ID { get; set; }
-
-            [Name("stop_name")]
-            public  string Name { get; set; }
-
-            [Name("parent_station")]
-            public  string Parents { get; set; }
-            public StationInfo(string id, string name, string parents)
-            {
-                ID = id;
-                Name = name;
-                Parents = parents;
-            }
-        }
         public FeedIDInfo GetFeedIDInfo(string str)
         {
             if (m_feedid == null) return null;
@@ -161,7 +278,10 @@ namespace SubwayConnect
         }
         public StationInfo GetStationInfo(string ID)
         {
-            return m_station_map[ID];
+            if (m_station_map.ContainsKey(ID))
+                return m_station_map[ID];
+            else
+                return new StationInfo("", "", "");
         }
     }
 /*

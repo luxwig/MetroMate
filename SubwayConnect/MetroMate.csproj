@@ -7,7 +7,7 @@
         <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
         <TemplateGuid>{edc1b0fa-90cd-4038-8fad-98fe74adb368}</TemplateGuid>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SubwayConnect</RootNamespace>
+        <RootNamespace>MetroMate</RootNamespace>
         <AssemblyName>SubwayConnect</AssemblyName>
         <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
         <MtouchEnableSGenConc>true</MtouchEnableSGenConc>
@@ -49,7 +49,8 @@
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
         <CodesignKey>iPhone Developer: luxwig@icloud.com (5SW2AXYM6W)</CodesignKey>
         <MtouchDebug>true</MtouchDebug>
-        <CodesignProvision>iOS Team Provisioning Profile: com.ludwig.SubwayConnect</CodesignProvision>
+        <CodesignProvision>iOS Team Provisioning Profile: com.ludwig.MetroMate</CodesignProvision>
+<AssemblyName>MetroMate</AssemblyName>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
         <DebugType>none</DebugType>
@@ -60,6 +61,7 @@
         <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
         <MtouchArch>ARM64</MtouchArch>
         <CodesignKey>iPhone Developer</CodesignKey>
+<AssemblyName>MetroMate</AssemblyName>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="System" />
@@ -124,6 +126,7 @@
         <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon60.png">
             <Visible>false</Visible>
         </ImageAsset>
+        <ImageAsset Include="Assets.xcassets\LaunchImage.launchimage\Contents.json" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Resources\" />
@@ -146,13 +149,51 @@
         </Compile>
         <Compile Include="lib\GtfsRealtime.cs" />
         <Compile Include="lib\MTInfo.cs" />
+        <Compile Include="StopSelCell.cs" />
+        <Compile Include="StopSelCell.designer.cs">
+          <DependentUpon>StopSelCell.cs</DependentUpon>
+        </Compile>
+        <Compile Include="ArrivalDetailCell.cs" />
+        <Compile Include="ArrivalDetailCell.designer.cs">
+          <DependentUpon>ArrivalDetailCell.cs</DependentUpon>
+        </Compile>
+        <Compile Include="ArrivalDetailViewController.cs" />
+        <Compile Include="ArrivalDetailViewController.designer.cs">
+          <DependentUpon>ArrivalDetailViewController.cs</DependentUpon>
+        </Compile>
+        <Compile Include="TripDetailsViewController.cs" />
+        <Compile Include="TripDetailsViewController.designer.cs">
+          <DependentUpon>TripDetailsViewController.cs</DependentUpon>
+        </Compile>
+        <Compile Include="TripDetailsCell.cs" />
+        <Compile Include="TripDetailsCell.designer.cs">
+          <DependentUpon>TripDetailsCell.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
-      <BundleResource Include="Resources\FeedID.json">
-        <LogicalName>FeedID</LogicalName>
-      </BundleResource>
       <BundleResource Include="Resources\ResSummary.json" />
       <BundleResource Include="Resources\stops.csv" />
+      <BundleResource Include="Resources\X.json" />
+      <BundleResource Include="Resources\logo\M.png" />
+      <BundleResource Include="Resources\logo\L.png" />
+      <BundleResource Include="Resources\logo\N.png" />
+      <BundleResource Include="Resources\logo\4.png" />
+      <BundleResource Include="Resources\logo\B.png" />
+      <BundleResource Include="Resources\logo\C.png" />
+      <BundleResource Include="Resources\logo\5.png" />
+      <BundleResource Include="Resources\logo\7.png" />
+      <BundleResource Include="Resources\logo\A.png" />
+      <BundleResource Include="Resources\logo\W.png" />
+      <BundleResource Include="Resources\logo\6.png" />
+      <BundleResource Include="Resources\logo\D.png" />
+      <BundleResource Include="Resources\logo\2.png" />
+      <BundleResource Include="Resources\logo\R.png" />
+      <BundleResource Include="Resources\logo\3.png" />
+      <BundleResource Include="Resources\logo\E.png" />
+      <BundleResource Include="Resources\logo\G.png" />
+      <BundleResource Include="Resources\logo\1.png" />
+      <BundleResource Include="Resources\logo\Q.png" />
+      <BundleResource Include="Resources\logo\F.png" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -1,6 +1,6 @@
 ﻿using UIKit;
 
-namespace SubwayConnect
+namespace MetroMate
 {
     public class Application
     {

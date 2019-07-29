@@ -1,7 +1,7 @@
 ﻿
 using System;
 using NUnit.Framework;
-using SubwayConnect;
+using MetroMate;
 using System.Collections.Generic;
 
 namespace SubwayConnectUnitTest
@@ -63,12 +63,25 @@ namespace SubwayConnectUnitTest
                 MTAInfo mTAInfo = new MTAInfo("ResSummary.json");
                 Assert.True(string.Equals(mTAInfo.GetStationInfo("101").Name, "Van Cortlandt Park - 242 St"));
             }
-            catch (Exception e)
+            catch 
             {
                 Assert.True(false);
             }
 
             
+        }
+
+        [Test]
+        public void GetRTInfosTest()
+        {
+            RTInfos rtinfos;
+            
+                MTAInfo mTAInfo = new MTAInfo("ResSummary.json");
+                rtinfos = new RTInfos(mTAInfo);
+                List<TripInfo> a = rtinfos.QueryByStation(new List<string>() { "125S", "A24S", "A24N" });
+                Assert.True(true);
+
+
         }
     }
 }

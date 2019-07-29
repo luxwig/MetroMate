@@ -117,15 +117,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\SubwayConnect\Resources\FeedID.json">
-      <Link>Resources\FeedID.json</Link>
-    </BundleResource>
     <BundleResource Include="..\SubwayConnect\Resources\ResSummary.json">
       <Link>Resources\ResSummary.json</Link>
     </BundleResource>
     <BundleResource Include="..\SubwayConnect\Resources\stops.csv">
       <Link>Resources\stops.csv</Link>
     </BundleResource>
+    <BundleResource Include="Resources\X.json" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

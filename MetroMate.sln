@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SubwayConnect", "SubwayConnect\SubwayConnect.csproj", "{84D33E4E-53A2-42D2-A9FA-716B99F7D471}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetroMate", "SubwayConnect\MetroMate.csproj", "{84D33E4E-53A2-42D2-A9FA-716B99F7D471}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{07A1028F-DCA6-4DBA-855B-01391FF7A03B}"
 EndProject
