@@ -17,6 +17,10 @@ namespace MetroMate
         {
             base.ViewDidLoad();
             Xab.Source = new TripTVS(tripinfo, src);
+            foreach (var id in tripinfo.StopTime)
+            {
+                Console.WriteLine(id.StopId);
+            }
             Xab.RowHeight = 70;
             // Perform any additional setup after loading the view, typically from a nib.
         }

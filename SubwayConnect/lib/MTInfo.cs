@@ -114,11 +114,13 @@ namespace MetroMate
 
     public class FeedIDInfo
     {
-        public readonly string FeedID;
+        public readonly List<string> FeedID;
         public readonly string Abb;
-        public FeedIDInfo(string feedid, String abb)
+        public FeedIDInfo(char[] feedid, String abb)
         {
-            FeedID = feedid;
+            FeedID = new List<string>();
+            foreach (int i in feedid)
+                FeedID.Add(i.ToString());
             Abb = abb;
         }
     }
@@ -173,6 +175,7 @@ namespace MetroMate
                     int i = 0;
                     foreach (StopTimeUpdate stopTimeUpdate in ent.TripUpdate.StopTimeUpdates)
                     {
+                        
                         if (string.Equals(stopTimeUpdate.StopId, SEEKING_STOP))
                         {
                             tripInfos.Add(new TripInfo(i, ent.TripUpdate.StopTimeUpdates.ToArray(), SEEKING_STOP, ent.TripUpdate.Trip.TripId));
@@ -194,16 +197,17 @@ namespace MetroMate
             List<TripInfo> r = new List<TripInfo>();
             foreach (string station in Stations)
             {
-                string url = src.GetFeedURL(station);
-                if (CacheFeed.ContainsKey(url))
-                    Console.WriteLine("Cashe Time {0}", (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds);
-                if (!CacheFeed.ContainsKey(url) || (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30)
-                {
-                    Console.WriteLine("Refreshing {0}", url);
-                    FeedMessage feed = GetFeed(url);
-                    CacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
+                foreach (string url in src.GetFeedURL(station)) {
+                    if (CacheFeed.ContainsKey(url))
+                        Console.WriteLine("Cashe Time {0}", (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds);
+                    if (!CacheFeed.ContainsKey(url) || (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30)
+                    {
+                        Console.WriteLine("Refreshing {0}", url);
+                        FeedMessage feed = GetFeed(url);
+                        CacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
+                    }
+                    r.AddRange(GetTripInfos(CacheFeed[url].Feed, station));
                 }
-                r.AddRange(GetTripInfos(CacheFeed[url].Feed, station));
             }
             r.Sort();
             return r;
@@ -246,7 +250,7 @@ namespace MetroMate
         {
             public char[] Idef;
             public string Name;
-            public string ID;
+            public char[] ID;
         }
         private Dictionary<char, FeedIDInfo> m_feedid;
         private static Dictionary<string, List<string>> ToDict(string Filename)
@@ -267,13 +271,18 @@ namespace MetroMate
             if (!m_feedid.ContainsKey(str[0])) return null;
             return m_feedid[str[0]];
         }
-        public string GetFeedURL(string str)
+        public List<string> GetFeedURL(string str)
         {
             if (m_key == null || m_URL ==  null)
                 return null;
             if (GetFeedIDInfo(str) != null)
-                return string.Format(m_URL[0]+m_URL[1], m_key, GetFeedIDInfo(str).FeedID);
-            return string.Format(m_URL[0], m_key);
+            {
+                List<string> r = new List<string>();
+                foreach (string url in GetFeedIDInfo(str).FeedID)
+                    r.Add(string.Format(m_URL[0] + m_URL[1], m_key, url));
+                return r;
+            }
+            return new List<string>() { string.Format(m_URL[0], m_key) };
 
         }
         public StationInfo GetStationInfo(string ID)

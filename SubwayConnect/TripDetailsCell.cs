@@ -12,7 +12,9 @@ namespace MetroMate
         internal void UpdateCell(TripInfo tripInfo, MTAInfo src, int pos)
         {
             long est;
-            txt_stop.Text = src.GetStationInfo(tripInfo.StopTime[pos].StopId).Name;
+            txt_stop.Text = string.Equals(src.GetStationInfo(tripInfo.StopTime[pos].StopId).Name, "")?
+                 "<Waypoint "+tripInfo.StopTime[pos].StopId+">" : src.GetStationInfo(tripInfo.StopTime[pos].StopId).Name;
+
             if (tripInfo.StopTime[pos].Arrival != null)
                 est = tripInfo.StopTime[pos].Arrival.Time;
             else

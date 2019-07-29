@@ -17,7 +17,9 @@ namespace MetroMate
                 src.GetStationInfo(tripInfo.StopTime[0].StopId).Name,
                 tripInfo.Index,
                 (tripInfo.Index <= 1 ? "" : "s"),
-                src.GetStationInfo(tripInfo.RefStop).Name);
+                string.Equals(src.GetStationInfo(tripInfo.RefStop).Name,"")?
+                "<Waypoint "+ tripInfo.RefStop +">": src.GetStationInfo(tripInfo.RefStop).Name
+                );
             txt_CC.Text = (DateTime.Now - tripInfo.GetTargetTime).ToString("mm'm 'ss's\n'");
             txt_CC.Text += tripInfo.GetTargetTime.ToString("HH:mm:ss");
             int index = tripInfo.Id.IndexOf('_');
