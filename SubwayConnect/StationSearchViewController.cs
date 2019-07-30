@@ -23,13 +23,18 @@ namespace MetroMate
             TVS.PerformSearch(searchBar.Text);
             tab_search.ReloadData();
         }
+
+        public void SetSearchBarText(string text)
+        {
+            searchBar.Text = text;
+        }
+        public string searchBar_Text;
+        public string SearchBarText { get { return searchBar.Text; } set { searchBar.Text = value; } }
         public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-            tab_search.TableHeaderView = searchBar;
-            TVS = new StationSearchTVS(stationInfos, url);
-            tab_search.Source = TVS;
-            tab_search.ReloadData();
+
+            searchBar.Text = searchBar_Text;
             searchBar.SizeToFit();
             searchBar.AutocorrectionType = UITextAutocorrectionType.No;
             searchBar.AutocapitalizationType = UITextAutocapitalizationType.None;
@@ -37,6 +42,17 @@ namespace MetroMate
             {
                 //this is the method that is called when the user searches
                 searchTable();
+
+                tab_search.ReloadData();
+            };
+
+            tab_search.TableHeaderView = searchBar;
+            TVS = new StationSearchTVS(stationInfos, url, this);
+            tab_search.Source = TVS;
+            tab_search.ReloadData();
+            searchBar.SearchButtonClicked += (sender, e) =>
+            {
+                searchBar.ResignFirstResponder();
             };
         }
 
@@ -62,17 +78,12 @@ namespace MetroMate
 
         Dictionary<string, List<StationInfo>> stationMap = new Dictionary<string, List<StationInfo>>();
         string[] keys;
+        List<StationInfo> stationInfos;
         public List<string> checkedStation;
-        public StationSearchTVS(List<StationInfo> stationInfos, List<string> url)
+        public StationSearchTVS(List<StationInfo> stationInfos, List<string> url, StationSearchViewController owner)
         {
-            foreach (StationInfo station in stationInfos)
-            {
-                if (stationMap.ContainsKey(station.Name[0].ToString()))
-                    stationMap[station.Name[0].ToString()].Add(station);
-                else
-                    stationMap.Add(station.Name[0].ToString(), new List<StationInfo>() { station });
-            }
-            keys = stationMap.Keys.ToArray();
+            this.stationInfos = stationInfos;
+            PerformSearch(owner.SearchBarText);
             checkedStation = url;
         }
 
@@ -83,6 +94,7 @@ namespace MetroMate
 
         public override nint RowsInSection(UITableView tableview, nint section)
         {
+
             return stationMap[keys[section]].Count;
         }
 
@@ -105,7 +117,7 @@ namespace MetroMate
                 cell.Accessory = UITableViewCellAccessory.None;
                 checkedStation.Remove(cell.DetailTextLabel.Text);
             }
-
+            tableView.DeselectRow(indexPath, true);
         }
         public override string TitleForHeader (UITableView tableView, nint section)
         {
@@ -132,7 +144,18 @@ namespace MetroMate
 
         internal void PerformSearch(string text)
         {
-            throw new NotImplementedException();
+            stationMap.Clear();
+            var filtered = stationInfos.FindAll(x =>
+                (x.Name.IndexOf(text, StringComparison.OrdinalIgnoreCase) >=0 || x.ID.IndexOf(text, StringComparison.OrdinalIgnoreCase)>=0) &&
+                 char.IsLetter(x.ID.Last()));
+            foreach (StationInfo station in filtered)
+            {
+                if (stationMap.ContainsKey(station.Name[0].ToString()))
+                    stationMap[station.Name[0].ToString()].Add(station);
+                else
+                    stationMap.Add(station.Name[0].ToString(), new List<StationInfo>() { station });
+            }
+            keys = stationMap.Keys.ToArray();
         }
     }
 }

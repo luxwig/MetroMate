@@ -44,27 +44,27 @@
                                 <rect key="frame" x="0.0" y="76" width="414" height="737"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="2093" accessoryType="disclosureIndicator" rowHeight="80" customClass="StopSelCell" reuseIdentifier="cell_stopsel">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="80"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="2093" accessoryType="disclosureIndicator" rowHeight="75" customClass="StopSelCell" reuseIdentifier="cell_stopsel">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="75"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2093" id="2094">
-                                            <rect key="frame" x="0.0" y="0.0" width="381" height="79.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="381" height="74.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2528" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                                     <rect key="frame" x="12" y="51" width="358" height="20"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <textField clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="2538" translatesAutoresizingMaskIntoConstraints="NO" fixedFrame="YES" opaque="NO">
                                                     <rect key="frame" x="12" y="8" width="216" height="30"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <textInputTraits key="textInputTraits" returnKeyType="done"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                    <textInputTraits key="textInputTraits" returnKeyType="done" spellCheckingType="no" autocorrectionType="no"/>
                                                     <connections>
                                                         <action selector="txt_stopidChanged:" destination="2093" id="5367" eventType="editingChanged"/>
                                                     </connections>
+                                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                                                 </textField>
                                             </subviews>
                                             <constraints>
@@ -96,22 +96,38 @@
                         <outlet property="btn_add" destination="yKN-kJ-t30" id="name-outlet-yKN-kJ-t30"/>
                     </connections>
                     <navigationItem id="12426" key="navigationItem" title="Station">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="44686">
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9c3-Xe-6aD" key="customView">
-                                <rect key="frame" x="0.0" y="0.0" width="61" height="30"/>
-                                <state key="normal" title="Search"/>
+                        <barButtonItem key="rightBarButtonItem" id="44686">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9c3-Xe-6aD" key="customView" hasAttributedTitle="YES">
+                                <rect key="frame" x="0.0" y="0.0" width="61" height="32"/>
                                 <connections>
                                     <segue id="10759" destination="10682" kind="show" identifier="searchTrip"/>
                                 </connections>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="Search">
+                                            <attributes>
+                                                <font key="NSFont" name="HelveticaNeue" size="17"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
                             </button>
                         </barButtonItem>
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="44687">
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yKN-kJ-t30" key="customView">
-                                <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
-                                <state key="normal" title="Add"/>
+                        <barButtonItem key="leftBarButtonItem" id="44687">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yKN-kJ-t30" key="customView" hasAttributedTitle="YES">
+                                <rect key="frame" x="0.0" y="0.0" width="46" height="32"/>
                                 <connections>
                                     <action selector="Btn_add_TouchUpInside:" destination="447" id="5596" eventType="touchUpInside"/>
                                 </connections>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="Add">
+                                            <attributes>
+                                                <font key="NSFont" name="HelveticaNeue" size="17"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
                             </button>
                         </barButtonItem>
                     </navigationItem>
@@ -343,10 +359,10 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
-                        <searchBar contentMode="redraw" id="50392" key="tableHeaderView" placeholder="Enter Station Name or Code">
+                        <searchBar contentMode="redraw" id="50392" key="tableHeaderView" placeholder="Enter Station Name or Code" searchBarStyle="minimal">
                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <textInputTraits key="textInputTraits"/>
+                            <textInputTraits key="textInputTraits" spellCheckingType="no" autocapitalizationType="allCharacters"/>
                         </searchBar>
                     </tableView>
                     <connections>
@@ -355,16 +371,23 @@
                         <outlet property="searchBar" destination="50392" id="name-outlet-50392"/>
                     </connections>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <navigationItem title="Title" id="50076" key="navigationItem">
-                        <barButtonItem key="rightBarButtonItem" style="plain" id="50078">
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="50077" translatesAutoresizingMaskIntoConstraints="NO" key="customView">
+                    <navigationItem title="Search Statiom" id="50076" key="navigationItem">
+                        <barButtonItem key="rightBarButtonItem" id="50078">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="50077" translatesAutoresizingMaskIntoConstraints="NO" key="customView" hasAttributedTitle="YES">
                                 <rect key="frame" x="0.0" y="0.0" width="46" height="33"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
-                                <state key="normal" title="Save"/>
                                 <connections>
                                     <segue id="50080" destination="47913" kind="unwind" unwindAction="UnwindToArrView:"/>
                                 </connections>
+                                <state key="normal">
+                                    <attributedString key="attributedTitle">
+                                        <fragment content="Save">
+                                            <attributes>
+                                                <font key="NSFont" name="HelveticaNeue" size="17"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
+                                </state>
                             </button>
                         </barButtonItem>
                     </navigationItem>

@@ -243,7 +243,6 @@ namespace MetroMate
         private readonly List<string> m_URL;
         private readonly List<StationInfo> m_station;
         private readonly Dictionary<string, StationInfo> m_station_map;
-        private readonly Hashtable m_station_name;
 
 
         public List<StationInfo> GetStations() { return m_station; }

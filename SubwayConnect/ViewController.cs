@@ -24,7 +24,7 @@ namespace MetroMate
                 new StationInfo("","","")
             };
             ArrTimeTable.Source = new StopSelTVS(stationInfos, mTAInfo);
-            ArrTimeTable.RowHeight = 85;
+            ArrTimeTable.RowHeight = 75;
             ArrTimeTable.ReloadData();
             // Perform any additional setup after loading the view, typically from a nib.
         }
@@ -65,6 +65,7 @@ namespace MetroMate
         {
             base.PrepareForSegue(segue, sender);
 
+            stationInfos = ((StopSelTVS)ArrTimeTable.Source).GetStations(ArrTimeTable);
             List<string> URL = new List<string>();
 
             foreach (var stationinfo in stationInfos)
@@ -82,9 +83,7 @@ namespace MetroMate
                                               as ArrivalDetailViewController;
 
                 if (arrivalDEtailViewController != null)
-                {
-                    stationInfos = ((StopSelTVS)ArrTimeTable.Source).GetStations(ArrTimeTable);
-                    
+                { 
                     arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(URL);
                     arrivalDEtailViewController.rtinfo = rtinfo;
                     arrivalDEtailViewController.src = mTAInfo;
@@ -96,6 +95,9 @@ namespace MetroMate
                 StationSearchViewController stationSearchViewController = segue.DestinationViewController as StationSearchViewController;
                 if (stationSearchViewController != null)
                 {
+                    var cell = ArrTimeTable.CellAt(ArrTimeTable.IndexPathForSelectedRow) as StopSelCell;
+
+                    stationSearchViewController.searchBar_Text = cell.Getstopid();
                     stationSearchViewController.stationInfos = mTAInfo.GetStations();
                     stationSearchViewController.stationInfos.Sort();
                     stationSearchViewController.url = URL;

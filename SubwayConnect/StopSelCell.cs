@@ -36,6 +36,7 @@ namespace MetroMate
             this.lbl_stopname.Text = a;
         }
 
+        public string Getstopid() { return txt_stopid.Text; }
         partial void txt_stopidChanged(UITextField sender)
         {
             txt_stopid.Text = txt_stopid.Text.ToUpper();
@@ -72,6 +73,12 @@ namespace MetroMate
         {
             return stationInfos.Count;
         }
+
+        public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
+        {
+            tableView.DeselectRow(indexPath, true);
+        }
+
 
 
         public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)

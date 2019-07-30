@@ -35,9 +35,9 @@
     },
     {
         "Idef": [
-            70
+            70,71
         ],
-        "Name": "BDFM - NRQW - G for F",
+        "Name": "BDFM - NRQW - G for F and G",
         "ID": [ 21, 16, 31, 26]
     },
     {
@@ -53,12 +53,5 @@
         ],
         "Name": "L",
         "ID": [2]
-    },
-    {
-        "Idef": [
-            71
-        ],
-        "Name": "G",
-        "ID": [31,21]
     }
 ]
