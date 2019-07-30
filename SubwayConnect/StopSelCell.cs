@@ -22,10 +22,10 @@ namespace MetroMate
         {
             this.mTAInfo = mTAInfox;
             txt_stopid.Text = StationInfo.ID;
-            lbl_stopname.Text = StationInfo.Name;
-            this.TVS = TVs;
+            lbl_stopname.Text = mTAInfo.GetStationInfo(txt_stopid.Text).Name;
+            TVS = TVs;
             this.ID = ID;
-            this.txt_stopid.ShouldReturn = (sender) => {
+            txt_stopid.ShouldReturn = (sender) => {
                 sender.ResignFirstResponder();
                 return false;
             };

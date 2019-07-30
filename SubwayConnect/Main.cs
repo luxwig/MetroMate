@@ -1,5 +1,7 @@
 ﻿using UIKit;
 
+
+#pragma warning disable MSB3277
 namespace MetroMate
 {
     public class Application

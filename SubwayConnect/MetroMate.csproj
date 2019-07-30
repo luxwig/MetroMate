@@ -169,6 +169,10 @@
         <Compile Include="TripDetailsCell.designer.cs">
           <DependentUpon>TripDetailsCell.cs</DependentUpon>
         </Compile>
+        <Compile Include="StationSearchViewController.cs" />
+        <Compile Include="StationSearchViewController.designer.cs">
+          <DependentUpon>StationSearchViewController.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
       <BundleResource Include="Resources\ResSummary.json" />

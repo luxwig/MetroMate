@@ -1,0 +1,138 @@
+using Foundation;
+using System;
+using UIKit;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace MetroMate
+{
+
+    public partial class StationSearchViewController : UITableViewController
+    {
+        public List<StationInfo> stationInfos;
+        public List<string> url;
+
+        public StationSearchTVS TVS;
+        public StationSearchViewController(IntPtr handle) : base(handle)
+        {
+
+        }
+        private void searchTable()
+        {
+            //perform the search, and refresh the table with the results
+            TVS.PerformSearch(searchBar.Text);
+            tab_search.ReloadData();
+        }
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+            tab_search.TableHeaderView = searchBar;
+            TVS = new StationSearchTVS(stationInfos, url);
+            tab_search.Source = TVS;
+            tab_search.ReloadData();
+            searchBar.SizeToFit();
+            searchBar.AutocorrectionType = UITextAutocorrectionType.No;
+            searchBar.AutocapitalizationType = UITextAutocapitalizationType.None;
+            searchBar.TextChanged += (sender, e) =>
+            {
+                //this is the method that is called when the user searches
+                searchTable();
+            };
+        }
+
+        public override void DidReceiveMemoryWarning()
+        {
+            base.DidReceiveMemoryWarning();
+            // Release any cached data, images, etc that aren't in use.
+        }
+        public override void PrepareForSegue(UIStoryboardSegue segue,
+            NSObject sender)
+        {
+            Console.WriteLine("Unwind");
+
+        }
+
+        
+
+
+    }
+    public class StationSearchTVS : UITableViewSource
+    {
+        string cellIdentifier = "cell_searchstation";
+
+        Dictionary<string, List<StationInfo>> stationMap = new Dictionary<string, List<StationInfo>>();
+        string[] keys;
+        public List<string> checkedStation;
+        public StationSearchTVS(List<StationInfo> stationInfos, List<string> url)
+        {
+            foreach (StationInfo station in stationInfos)
+            {
+                if (stationMap.ContainsKey(station.Name[0].ToString()))
+                    stationMap[station.Name[0].ToString()].Add(station);
+                else
+                    stationMap.Add(station.Name[0].ToString(), new List<StationInfo>() { station });
+            }
+            keys = stationMap.Keys.ToArray();
+            checkedStation = url;
+        }
+
+        public override nint NumberOfSections(UITableView tableView)
+        {
+            return keys.Length;
+        }
+
+        public override nint RowsInSection(UITableView tableview, nint section)
+        {
+            return stationMap[keys[section]].Count;
+        }
+
+        public override string[] SectionIndexTitles(UITableView tableView)
+        {
+            return keys;
+        }
+
+
+        public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+        {
+            UITableViewCell cell = tableView.CellAt(indexPath);
+            if (cell.Accessory == UITableViewCellAccessory.None)
+            {
+                cell.Accessory = UITableViewCellAccessory.Checkmark;
+                checkedStation.Add(cell.DetailTextLabel.Text);
+            }
+            else
+            {
+                cell.Accessory = UITableViewCellAccessory.None;
+                checkedStation.Remove(cell.DetailTextLabel.Text);
+            }
+
+        }
+        public override string TitleForHeader (UITableView tableView, nint section)
+        {
+            return keys[section];
+        }
+
+        public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
+        {
+            // request a recycled cell to save memory
+            UITableViewCell cell = tableView.DequeueReusableCell(cellIdentifier);
+            // if there are no cells to reuse, create a new one
+            if (cell == null)
+                cell = new UITableViewCell(UITableViewCellStyle.Subtitle, cellIdentifier);
+            cell.Accessory = UITableViewCellAccessory.None;
+            cell.TextLabel.Text = stationMap[keys[indexPath.Section]][indexPath.Row].Name;
+            cell.DetailTextLabel.Text = stationMap[keys[indexPath.Section]][indexPath.Row].ID;
+            if (checkedStation.Contains(cell.DetailTextLabel.Text))
+                cell.Accessory = UITableViewCellAccessory.Checkmark;
+            else
+                cell.Accessory = UITableViewCellAccessory.None;
+            return cell;
+            
+        }
+
+        internal void PerformSearch(string text)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

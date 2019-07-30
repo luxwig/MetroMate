@@ -25,8 +25,6 @@ namespace MetroMate
             };
             ArrTimeTable.Source = new StopSelTVS(stationInfos, mTAInfo);
             ArrTimeTable.RowHeight = 85;
-
-            
             ArrTimeTable.ReloadData();
             // Perform any additional setup after loading the view, typically from a nib.
         }
@@ -44,32 +42,66 @@ namespace MetroMate
             ArrTimeTable.ReloadData();
         }
 
+        [Action("UnwindToArrView:")]
+        public void UnwindToArrView(UIStoryboardSegue segue)
+        {
+            StationSearchViewController stationSearchViewController = segue.SourceViewController as StationSearchViewController;
+            if (stationSearchViewController != null)
+            {
+                StopSelTVS TVS = ArrTimeTable.Source as StopSelTVS;
+                TVS.stationInfos = new List<StationInfo>();
+                foreach (string station in stationSearchViewController.TVS.checkedStation)
+                {
+                    TVS.stationInfos.Add(mTAInfo.GetStationInfo(station));
+                }
+                ArrTimeTable.ReloadData();
+            }
+            Console.WriteLine("We've unwinded to Yellow!");
+        }
+
+
         public override void PrepareForSegue(UIStoryboardSegue segue,
             NSObject sender)
         {
             base.PrepareForSegue(segue, sender);
 
-            var arrivalDEtailViewController = segue.DestinationViewController
-                                          as ArrivalDetailViewController;
+            List<string> URL = new List<string>();
 
-            if (arrivalDEtailViewController != null)
+            foreach (var stationinfo in stationInfos)
             {
-                stationInfos = ((StopSelTVS)ArrTimeTable.Source).GetStations(ArrTimeTable);
-                List<string> URL = new List<string>();
-                
-                foreach (var stationinfo in stationInfos)
+                if (!string.Equals(stationinfo.Name, ""))
                 {
-                    if (!string.Equals(stationinfo.Name,""))
-                    {
-                        URL.Add(stationinfo.ID);
-                    }
+                    URL.Add(stationinfo.ID);
                 }
-                
-                arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(URL);
-                arrivalDEtailViewController.rtinfo = rtinfo;
-                arrivalDEtailViewController.src = mTAInfo;
             }
-        }
 
+
+            if (string.Equals(segue.Identifier, "searchTrip"))
+            {
+                var arrivalDEtailViewController = segue.DestinationViewController
+                                              as ArrivalDetailViewController;
+
+                if (arrivalDEtailViewController != null)
+                {
+                    stationInfos = ((StopSelTVS)ArrTimeTable.Source).GetStations(ArrTimeTable);
+                    
+                    arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(URL);
+                    arrivalDEtailViewController.rtinfo = rtinfo;
+                    arrivalDEtailViewController.src = mTAInfo;
+                }
+            }
+
+            if (string.Equals(segue.Identifier, "searchStation"))
+            {
+                StationSearchViewController stationSearchViewController = segue.DestinationViewController as StationSearchViewController;
+                if (stationSearchViewController != null)
+                {
+                    stationSearchViewController.stationInfos = mTAInfo.GetStations();
+                    stationSearchViewController.stationInfos.Sort();
+                    stationSearchViewController.url = URL;
+                }
+            }
+
+        }
     }
 }

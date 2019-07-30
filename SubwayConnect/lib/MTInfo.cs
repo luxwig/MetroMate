@@ -16,7 +16,7 @@ using System.Net;
 
 namespace MetroMate
 {
-    public class StationInfo
+    public class StationInfo:IComparable, IComparable<StationInfo>
     {
         [Name("stop_id")]
         public string ID { get; set; }
@@ -36,38 +36,18 @@ namespace MetroMate
             Name = name;
             Parents = parents;
         }
-    }
-    /*
-    public class TripInfoGroup
-    {
-        public struct URLMap
-        {
-            public URLMap(string URL, string stop)
-            {
-                this.URL = URL;
-                this.stop = stop;
-            }
-            string stop, URL;
-        }
-        
-        List<TripInfo> TripInfos;
-        Dictionary<string, FeedMessage> MessageMap;
-        public TripInfoGroup(List<string> URL, List<URLMap> urlmap)
-        {
-            MessageMap = new Dictionary<string, FeedMessage>();
-            TripInfos = new List<TripInfo>();
-            foreach (string url in URL)
-            {
-                MessageMap.Add(url, GetFeed(url));
-            }
-            foreach (URLMap u in urlmap)
-            {
 
-            }
+        public int CompareTo(object obj)
+        {
+            return string.Compare(Name, (obj as StationInfo).Name);
+        }
+
+        public int CompareTo(StationInfo other)
+        {
+            return string.Compare(Name, other.Name);
         }
     }
 
-    */
     public class TripInfo : IComparable, IComparable<TripInfo>
     {
         public TripInfo(int index, StopTimeUpdate[] stopTime, string refStop, string id)
@@ -265,6 +245,8 @@ namespace MetroMate
         private readonly Dictionary<string, StationInfo> m_station_map;
         private readonly Hashtable m_station_name;
 
+
+        public List<StationInfo> GetStations() { return m_station; }
         public FeedIDInfo GetFeedIDInfo(string str)
         {
             if (m_feedid == null) return null;
