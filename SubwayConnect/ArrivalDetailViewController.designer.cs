@@ -18,11 +18,24 @@ namespace MetroMate
         [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UITableView ArrTimeTable { get; set; }
 
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UISegmentedControl seg_dirc { get; set; }
+
+        [Action ("DirctionValueChanged:")]
+        [GeneratedCode ("iOS Designer", "1.0")]
+        partial void DirctionValueChanged (UIKit.UISegmentedControl sender);
+
         void ReleaseDesignerOutlets ()
         {
             if (ArrTimeTable != null) {
                 ArrTimeTable.Dispose ();
                 ArrTimeTable = null;
+            }
+
+            if (seg_dirc != null) {
+                seg_dirc.Dispose ();
+                seg_dirc = null;
             }
         }
     }

@@ -20,7 +20,11 @@ namespace MetroMate
             else
                 est = tripInfo.StopTime[pos].Departure.Time;
             DateTime dtf = DateTimeOffset.FromUnixTimeSeconds(est).ToLocalTime().DateTime;
-            txt_time.Text = string.Format("{0}\n{1}", (dtf - DateTime.Now).ToString("mm'm 'ss's'"),
+            if (Math.Abs((dtf - DateTime.Now).Hours) == 0)
+                txt_time.Text = string.Format("{0}\n{1}", (dtf - DateTime.Now).ToString("mm'm'ss's'"),
+                dtf.ToString("HH:mm:ss"));
+            else
+                txt_time.Text = string.Format("{0}\n{1}", (dtf - DateTime.Now).ToString("h'h'mm'm'ss's'"),
                 dtf.ToString("HH:mm:ss"));
             if (dtf < DateTime.Now)
             {

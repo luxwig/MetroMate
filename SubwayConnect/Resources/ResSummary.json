@@ -2,5 +2,6 @@
     "URL": ["http://datamine.mta.info/mta_esi.php?key={0}","&feed_id={1}"],
     "FeedID": [ "X.json"],
     "Key": [ "b12af9a5fd7d6665a230010a00d63ca4" ],
-    "Station":  ["stops.csv"]
+    "Station":  ["stops.csv"],
+    "Transfer":  ["transfer.csv"]
 }

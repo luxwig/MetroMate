@@ -198,6 +198,7 @@
       <BundleResource Include="Resources\logo\1.png" />
       <BundleResource Include="Resources\logo\Q.png" />
       <BundleResource Include="Resources\logo\F.png" />
+      <BundleResource Include="Resources\transfer.csv" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -16,6 +16,7 @@ using System.Net;
 
 namespace MetroMate
 {
+    
     public class StationInfo:IComparable, IComparable<StationInfo>
     {
         [Name("stop_id")]
@@ -47,6 +48,26 @@ namespace MetroMate
             return string.Compare(Name, other.Name);
         }
     }
+
+
+    public class TransferInfo
+    {
+        [Name("from_stop_id")]
+        public string From_stop { get; set; }
+
+        [Name("to_stop_id")]
+        public string To_stop { get; set; }
+        public TransferInfo()
+        {
+            From_stop = To_stop = "";
+        }
+        public TransferInfo(string From_stop, string To_stop)
+        {
+            this.From_stop = From_stop;
+            this.To_stop = To_stop;
+        }
+    }
+
 
     public class TripInfo : IComparable, IComparable<TripInfo>
     {
@@ -134,14 +155,26 @@ namespace MetroMate
             }
             finally
             {
-                dataStream.Close();
-                response.Close();
+                if (dataStream != null)
+                    dataStream.Close();
+                if (response != null )
+                    response.Close();
             }
             return feed;
         }
         private Dictionary<string, FeedMessageCashe> CacheFeed;
 
 
+        public static DateTime StopLongTimeToDateTime(StopTimeUpdate stop)
+        {
+            long est;
+            if (stop.Arrival != null)
+                est = stop.Arrival.Time;
+            else
+                est = stop.Departure.Time;
+            return DateTimeOffset.FromUnixTimeSeconds(est).ToLocalTime().DateTime;
+
+        }
 
         private static List<TripInfo> GetTripInfos(
             FeedMessage feed, string SEEKING_STOP)
@@ -223,8 +256,60 @@ namespace MetroMate
                 reader.Close();
                 m_station_map = m_station.ToDictionary(x => x.ID, x => x);
             }
+
+
+         
+
+            if (dict.ContainsKey("Transfer"))
+            {
+                string path = NSBundle.MainBundle.PathForResource(dict["Transfer"][0], "");
+                StreamReader reader = new StreamReader(File.OpenRead(path));
+                CsvReader csvReader = new CsvReader(reader);
+                var x = csvReader.GetRecords<TransferInfo>().ToList();
+                TransferComplex = new  TransferComplexInfo(x);
+                reader.Close();
+            }
         }
 
+        
+
+        public class TransferComplexInfo
+        {
+#if DEBUG
+            public Dictionary<string, List<string>> transfer_map;
+#else
+            private Dictionary<string, List<string>> transfer_map;
+#endif
+            public TransferComplexInfo(List<TransferInfo> infos)
+            {
+                transfer_map = new Dictionary<string, List<string>>();
+                foreach (var Info in infos)
+                {
+                    if (!string.Equals(Info.From_stop, Info.To_stop))
+                    {
+                        if (transfer_map.ContainsKey(Info.From_stop))
+                            transfer_map[Info.From_stop].Add(Info.To_stop);
+                        else
+                            transfer_map.Add(Info.From_stop, new List<string>() { Info.To_stop });
+                        if (transfer_map.ContainsKey(Info.To_stop))
+                            transfer_map[Info.To_stop].Add(Info.From_stop);
+                        else
+                            transfer_map.Add(Info.To_stop, new List<string>() { Info.From_stop });
+                    }
+                }
+            }
+
+            public List<string> GetTransferStations(string station)
+            {
+                string s = station;
+                if (char.IsLetter(station[station.Length - 1]))
+                    s = station.Substring(0, station.Length - 1);
+                if (transfer_map.ContainsKey(s))
+                    return transfer_map[s];
+                else
+                    return new List<string>() ;
+            }
+        }
 
         private struct JSONFeed
         {
@@ -244,7 +329,7 @@ namespace MetroMate
         private readonly List<StationInfo> m_station;
         private readonly Dictionary<string, StationInfo> m_station_map;
 
-
+        public TransferComplexInfo TransferComplex;
         public List<StationInfo> GetStations() { return m_station; }
         public FeedIDInfo GetFeedIDInfo(string str)
         {

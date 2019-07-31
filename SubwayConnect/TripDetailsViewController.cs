@@ -2,7 +2,7 @@ using Foundation;
 using System;
 using UIKit;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace MetroMate
 {
     public partial class TripDetailsViewController : UITableViewController
@@ -25,6 +25,24 @@ namespace MetroMate
             // Perform any additional setup after loading the view, typically from a nib.
         }
 
+        private List<string> AddBothDirc(List<string> list)
+        {
+            HashSet<string> r = new HashSet<string>();
+            foreach (var item in list)
+            {
+                if (char.IsLetter(item[item.Length - 1]))
+                {
+                    r.Add(item.Substring(0, item.Length - 1) + "S");
+                    r.Add(item.Substring(0, item.Length - 1) + "N");
+                }
+                if (char.IsDigit(item[item.Length - 1]))
+                {
+                    r.Add(item + "S");
+                    r.Add(item + "N");
+                }
+            }
+            return r.ToList();
+        }
         public override void PrepareForSegue(UIStoryboardSegue segue,
             NSObject sender)
         {
@@ -41,7 +59,12 @@ namespace MetroMate
                 arrivalDEtailViewController.Title = src.GetStationInfo(TVS.tripinfo.StopTime[rowPath.Row].StopId).Name;
                 arrivalDEtailViewController.src = src;
                 arrivalDEtailViewController.rtinfo = rtinfo;
-                arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(new List<string>() { TVS.tripinfo.StopTime[rowPath.Row].StopId });
+                List<string> stationList = new List<string>() { TVS.tripinfo.StopTime[rowPath.Row].StopId };
+                stationList.AddRange(src.TransferComplex.GetTransferStations(TVS.tripinfo.StopTime[rowPath.Row].StopId));
+                arrivalDEtailViewController.SegDircValue = 
+                    TVS.tripinfo.StopTime[rowPath.Row].StopId[TVS.tripinfo.StopTime[rowPath.Row].StopId.Length - 1] == 'N' ? 1 : 2;
+                arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(AddBothDirc(stationList));
+                arrivalDEtailViewController.RefTime = RTInfos.StopLongTimeToDateTime(TVS.tripinfo.StopTime[rowPath.Row]);
             }
         }
     }

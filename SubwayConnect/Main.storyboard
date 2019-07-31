@@ -183,7 +183,7 @@
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="13429" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES" numberOfLines="2">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="13429" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES" numberOfLines="3">
                                                     <rect key="frame" x="308" y="4" width="91" height="94"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
                                                     <color key="textColor" colorSpace="calibratedRGB" red="0" green="0.47843137254901963" blue="1" alpha="1"/>
@@ -227,17 +227,32 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="51532" misplaced="YES">
+                                <rect key="frame" x="9" y="70" width="394" height="29"/>
+                                <segments>
+                                    <segment title="Both"/>
+                                    <segment title="N/B"/>
+                                    <segment title="S/B"/>
+                                </segments>
+                                <connections>
+                                    <action selector="DirctionValueChanged:" destination="10682" id="52229" eventType="valueChanged"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="10684" firstAttribute="leading" secondItem="10690" secondAttribute="leading" id="10702"/>
                             <constraint firstAttribute="trailing" secondItem="10684" secondAttribute="trailing" id="10709"/>
                             <constraint firstItem="10711" firstAttribute="top" secondItem="10684" secondAttribute="bottom" id="10710"/>
-                            <constraint id="13421" firstItem="10684" firstAttribute="top" secondItem="10705" secondAttribute="bottom"/>
+                            <constraint id="51536" firstItem="10684" firstAttribute="top" secondItem="51532" secondAttribute="bottom"/>
+                            <constraint id="51912" firstItem="51532" firstAttribute="top" secondItem="10705" secondAttribute="bottom"/>
+                            <constraint id="56541" firstItem="51532" firstAttribute="trailing" secondItem="10690" secondAttribute="trailingMargin" constant="9"/>
+                            <constraint id="56542" firstAttribute="leadingMargin" secondItem="51532" secondAttribute="leading" constant="10"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="ArrTimeTable" destination="10684" id="10683"/>
+                        <outlet property="seg_dirc" destination="51532" id="name-outlet-51532"/>
                     </connections>
                     <tabBarItem key="tabBarItem" title="Arrivial Time" id="13487"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
@@ -286,8 +301,8 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" id="28070" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="2" baselineAdjustment="alignBaselines">
-                                            <rect key="frame" x="350" y="0.0" width="44" height="36.5"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" adjustsFontSizeToFit="NO" id="28070" translatesAutoresizingMaskIntoConstraints="NO" numberOfLines="3" baselineAdjustment="alignBaselines">
+                                            <rect key="frame" x="350" y="0.0" width="44" height="36"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <color key="textColor" colorSpace="calibratedRGB" red="0" green="0.47843137254901963" blue="1" alpha="1"/>
                                             <nil key="highlightedColor"/>
@@ -335,7 +350,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="48050" style="IBUITableViewCellStyleSubtitle" textLabel="49014" detailTextLabel="49015" reuseIdentifier="cell_searchstation" accessoryType="disclosureIndicator">
-                                <rect key="frame" x="0.0" y="72" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="116" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="48050" id="48051">
                                     <rect key="frame" x="0.0" y="0.0" width="376" height="43.5"/>
@@ -359,10 +374,16 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
-                        <searchBar contentMode="redraw" id="50392" key="tableHeaderView" placeholder="Enter Station Name or Code" searchBarStyle="minimal">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                        <searchBar contentMode="redraw" id="50392" key="tableHeaderView" placeholder="Enter Station Name or Code" showsScopeBar="YES" searchBarStyle="minimal">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="88"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                             <textInputTraits key="textInputTraits" spellCheckingType="no" autocapitalizationType="allCharacters"/>
+                            <scopeButtonTitles>
+                                <string>Both</string>
+                                <string>N/B</string>
+                                <string>S/B</string>
+                            </scopeButtonTitles>
+                            <color key="barTintColor" cocoaTouchSystemColor="tableCellGroupedBackgroundColor"/>
                         </searchBar>
                     </tableView>
                     <connections>
@@ -371,7 +392,7 @@
                         <outlet property="searchBar" destination="50392" id="name-outlet-50392"/>
                     </connections>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
-                    <navigationItem title="Search Statiom" id="50076" key="navigationItem">
+                    <navigationItem title="Search Station" id="50076" key="navigationItem">
                         <barButtonItem key="rightBarButtonItem" id="50078">
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="50077" translatesAutoresizingMaskIntoConstraints="NO" key="customView" hasAttributedTitle="YES">
                                 <rect key="frame" x="0.0" y="0.0" width="46" height="33"/>
