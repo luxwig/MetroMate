@@ -72,7 +72,12 @@ namespace MetroMate
             {
                 if (!string.Equals(stationinfo.Name, ""))
                 {
-                    URL.Add(stationinfo.ID);
+                    if (char.IsLetter(stationinfo.ID[stationinfo.ID.Length-1])) URL.Add(stationinfo.ID);
+                    else
+                    {
+                        URL.Add(stationinfo.ID + "S");
+                        URL.Add(stationinfo.ID + "N");
+                    }
                 }
             }
 

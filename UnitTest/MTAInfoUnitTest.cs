@@ -83,5 +83,21 @@ namespace SubwayConnectUnitTest
 
 
         }
+
+        [Test]
+        public void TransferComplexInfoTest()
+        {
+            TransferInfo transferInfo = new TransferInfo("A", "c");
+            MTAInfo mTAInfo = new MTAInfo("ResSummary.json");
+            foreach (var pair in mTAInfo.TransferComplex.transfer_map)
+            {
+                Console.Write("{0} => ", mTAInfo.GetStationInfo(pair.Key).Name);
+                foreach (string t_name in pair.Value)
+                {
+                    Console.Write("{0} ", mTAInfo.GetStationInfo(t_name).Name);
+                }
+                Console.WriteLine();
+            }
+        }
     }
 }

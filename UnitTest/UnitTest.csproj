@@ -124,6 +124,9 @@
       <Link>Resources\stops.csv</Link>
     </BundleResource>
     <BundleResource Include="Resources\X.json" />
+    <BundleResource Include="..\SubwayConnect\Resources\transfer.csv">
+      <Link>Resources\transfer.csv</Link>
+    </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

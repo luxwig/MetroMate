@@ -13,6 +13,7 @@ using System.IO;
 using CsvHelper.Configuration.Attributes;
 using System.Linq;
 using System.Net;
+using UIKit;
 
 namespace MetroMate
 {
@@ -40,12 +41,17 @@ namespace MetroMate
 
         public int CompareTo(object obj)
         {
-            return string.Compare(Name, (obj as StationInfo).Name);
+            return
+                string.Compare(Name, (obj as StationInfo).Name) == 0 ?
+                string.Compare(ID, (obj as StationInfo).ID) :
+                string.Compare(Name, (obj as StationInfo).Name);
         }
 
         public int CompareTo(StationInfo other)
         {
-            return string.Compare(Name, other.Name);
+            return string.Compare(Name, other.Name) == 0 ?
+                string.Compare(ID, other.ID) :
+                string.Compare(Name, other.Name);
         }
     }
 
@@ -152,12 +158,13 @@ namespace MetroMate
                 response = (HttpWebResponse)req.GetResponse();
                 dataStream = response.GetResponseStream();
                 feed = Serializer.Deserialize<FeedMessage>(dataStream);
+
             }
             finally
             {
                 if (dataStream != null)
                     dataStream.Close();
-                if (response != null )
+                if (response != null)
                     response.Close();
             }
             return feed;
