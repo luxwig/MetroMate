@@ -7,45 +7,16 @@ using System.Threading.Tasks;
 
 namespace MetroMate
 {
-    public partial class TripDetailsViewController : UITableViewController
+    public partial class TripDetailsViewController : UITableViewRefreshController
     {
         public TripInfo tripinfo;
         public MTAInfo src;
         public RTInfos rtinfo;
-        private bool useRefreshControl = false;
-        public UIRefreshControl RefreshControl;
-
-        private async Task RefreshAsync()
-        {
-            // only activate the refresh control if the feature is available  
-            if (useRefreshControl)
-                RefreshControl.BeginRefreshing();
-
-            if (useRefreshControl)
-                RefreshControl.EndRefreshing();
-
-            Xab.ReloadData();
-        }
-
-
-        private void AddRefreshControl()
-        {
-            if (UIDevice.CurrentDevice.CheckSystemVersion(6, 0))
-            {
-                RefreshControl = new UIRefreshControl();
-                RefreshControl.ValueChanged += async (sender, e) =>
-                {
-                    // the refresh control is available, let's add it  
-                    rtinfo.Refresh();
-                    await RefreshAsync();
-                };
-                useRefreshControl = true;
-            }
-        }
 
         public TripDetailsViewController (IntPtr handle) : base (handle)
         {
         }
+
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
@@ -56,10 +27,7 @@ namespace MetroMate
             }
             Xab.RowHeight = 70;
             // Perform any additional setup after loading the view, typically from a nib.
-
-            await RefreshAsync();
-            AddRefreshControl();
-            Xab.Add(RefreshControl);
+            Xab.Add(GetRefreshControl());
         }
 
         private List<string> AddBothDirc(List<string> list)
@@ -103,6 +71,16 @@ namespace MetroMate
                 arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(AddBothDirc(stationList));
                 arrivalDEtailViewController.RefTime = RTInfos.StopLongTimeToDateTime(TVS.tripinfo.StopTime[rowPath.Row]);
             }
+        }
+
+        protected override void RefreshAsyncFunc()
+        {
+            Xab.ReloadData();
+        }
+
+        protected override void UpdateDataItem()
+        {
+            rtinfo.Refresh();
         }
     }
 }

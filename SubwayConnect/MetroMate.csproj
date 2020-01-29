@@ -173,6 +173,7 @@
         <Compile Include="StationSearchViewController.designer.cs">
           <DependentUpon>StationSearchViewController.cs</DependentUpon>
         </Compile>
+        <Compile Include="UITableViewRefreshController.cs" />
     </ItemGroup>
     <ItemGroup>
       <BundleResource Include="Resources\ResSummary.json" />
