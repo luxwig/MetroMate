@@ -2,6 +2,8 @@ using Foundation;
 using System;
 using UIKit;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace MetroMate
 {
     public partial class ArrivalDetailViewController : UIViewController
@@ -21,7 +23,7 @@ namespace MetroMate
         {
             RefTime = DateTime.MinValue;
         }
-        public override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
             ATVS =  new ArrivalDetailTVS(TripInfos,src, this, RefTime);
@@ -29,7 +31,13 @@ namespace MetroMate
             ArrTimeTable.RowHeight = 110;
             SetSegDirc(SegDircValue);
             ATVS.filterDirection((int)seg_dirc.SelectedSegment);
+
+            await RefreshAsync();
+            AddRefreshControl();
+            ArrTimeTable.Add(GetRefreshControl());
+
             ArrTimeTable.ReloadData();
+
             //ArrTimeTable.SelectRow(NSIndexPath.FromRowSection(ATVS.GetRefTimeIndex(), 0), true, UITableViewScrollPosition.None);
             //ArrTimeTable.ScrollToNearestSelected(UITableViewScrollPosition.Middle, true);
 
@@ -68,5 +76,43 @@ namespace MetroMate
             ATVS.filterDirection((int)seg_dirc.SelectedSegment);
             ArrTimeTable.ReloadData();
         }
+
+
+        // The following codes are designing to implemented pull-to-reload functionality
+        // Due to poor designinig decision, the class UITableViewRefreshController cannot be used here
+
+        private UIRefreshControl RefreshControl;
+        private bool useRefreshControl = false;
+        protected void RefreshAsyncFunc() { ArrTimeTable.ReloadData(); }
+        protected void UpdateDataItem() { rtinfo.Refresh(); }
+        protected UIRefreshControl GetRefreshControl() { return RefreshControl; }
+
+        private async Task RefreshAsync()
+        {
+            // only activate the refresh control if the feature is available  
+            if (useRefreshControl)
+                RefreshControl.BeginRefreshing();
+
+            if (useRefreshControl)
+                RefreshControl.EndRefreshing();
+
+            RefreshAsyncFunc();
+        }
+
+        private void AddRefreshControl()
+        {
+            if (UIDevice.CurrentDevice.CheckSystemVersion(6, 0))
+            {
+                RefreshControl = new UIRefreshControl();
+                RefreshControl.ValueChanged += async (sender, e) =>
+                {
+                    // the refresh control is available, let's add it  
+                    UpdateDataItem();
+                    await RefreshAsync();
+                };
+                useRefreshControl = true;
+            }
+        }
+
     }
 }
