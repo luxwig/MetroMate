@@ -3,6 +3,8 @@ using System;
 using UIKit;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
 namespace MetroMate
 {
     public partial class TripDetailsViewController : UITableViewController
@@ -10,10 +12,41 @@ namespace MetroMate
         public TripInfo tripinfo;
         public MTAInfo src;
         public RTInfos rtinfo;
+        private bool useRefreshControl = false;
+        public UIRefreshControl RefreshControl;
+
+        private async Task RefreshAsync()
+        {
+            // only activate the refresh control if the feature is available  
+            if (useRefreshControl)
+                RefreshControl.BeginRefreshing();
+
+            if (useRefreshControl)
+                RefreshControl.EndRefreshing();
+
+            Xab.ReloadData();
+        }
+
+
+        private void AddRefreshControl()
+        {
+            if (UIDevice.CurrentDevice.CheckSystemVersion(6, 0))
+            {
+                RefreshControl = new UIRefreshControl();
+                RefreshControl.ValueChanged += async (sender, e) =>
+                {
+                    // the refresh control is available, let's add it  
+                    rtinfo.Refresh();
+                    await RefreshAsync();
+                };
+                useRefreshControl = true;
+            }
+        }
+
         public TripDetailsViewController (IntPtr handle) : base (handle)
         {
         }
-        public override void ViewDidLoad()
+        public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
             Xab.Source = new TripTVS(tripinfo, src);
@@ -23,6 +56,10 @@ namespace MetroMate
             }
             Xab.RowHeight = 70;
             // Perform any additional setup after loading the view, typically from a nib.
+
+            await RefreshAsync();
+            AddRefreshControl();
+            Xab.Add(RefreshControl);
         }
 
         private List<string> AddBothDirc(List<string> list)
