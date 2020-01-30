@@ -211,7 +211,6 @@ namespace MetroMate
         }
 
 
-        // Refreshflag: 0 Auto, 1 Force Refresh, 2 Force not Refresh
 
         public void Refresh()
         {
@@ -220,6 +219,9 @@ namespace MetroMate
                 CacheFeed[url] = new FeedMessageCashe(GetFeed(url), DateTime.Now);
             }
         }
+
+        // Refreshflag: 0 Auto, 1 Force Refresh, 2 Force not Refresh
+
         public List<TripInfo> QueryByStation(List<string> Stations, int RefreshFlag = 0)
         {
             List<TripInfo> r = new List<TripInfo>();
@@ -230,7 +232,9 @@ namespace MetroMate
                     LastQuery.Add(url);
                     if (CacheFeed.ContainsKey(url))
                         Console.WriteLine("Cashe Time {0}", (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds);
-                    if (!CacheFeed.ContainsKey(url) || (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30)
+                    if (!CacheFeed.ContainsKey(url) ||
+                        ((DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30 && RefreshFlag != 2) ||
+                        RefreshFlag == 1)
                     {
                         Console.WriteLine("Refreshing {0}", url);
                         FeedMessage feed = GetFeed(url);
@@ -243,6 +247,7 @@ namespace MetroMate
             return r;
         }
     }
+
     public class MTAInfo
     {
 
@@ -374,6 +379,15 @@ namespace MetroMate
                 return m_station_map[ID];
             else
                 return new StationInfo("", "", "");
+        }
+    }
+
+    public class RouteInfo
+    {
+        private RTInfos rtinfos;
+        public RouteInfo(RTInfos rtinfos)
+        {
+            this.rtinfos = rtinfos;
         }
     }
 /*
