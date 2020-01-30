@@ -99,6 +99,9 @@
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="LaunchScreen.storyboard" />
+    <InterfaceDefinition Include="..\SubwayConnect\Resources\LaunchScreen.xib">
+      <Link>Resources\LaunchScreen.xib</Link>
+    </InterfaceDefinition>
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -115,17 +118,86 @@
     <Compile Include="..\SubwayConnect\lib\MTInfo.cs">
       <Link>lib\MTInfo.cs</Link>
     </Compile>
+    <Compile Include="RouteInfoUnitTest.cs" />
+    <Compile Include="..\SubwayConnect\lib\NTree.cs">
+      <Link>NTree.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <BundleResource Include="..\SubwayConnect\Resources\ResSummary.json">
-      <Link>Resources\ResSummary.json</Link>
+    <BundleResource Include="..\SubwayConnect\Resources\X.json">
+      <Link>Resources\X.json</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\.DS_Store">
+      <Link>Resources\.DS_Store</Link>
     </BundleResource>
     <BundleResource Include="..\SubwayConnect\Resources\stops.csv">
       <Link>Resources\stops.csv</Link>
     </BundleResource>
-    <BundleResource Include="Resources\X.json" />
+    <BundleResource Include="..\SubwayConnect\Resources\ResSummary.json">
+      <Link>Resources\ResSummary.json</Link>
+    </BundleResource>
     <BundleResource Include="..\SubwayConnect\Resources\transfer.csv">
       <Link>Resources\transfer.csv</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\M.png">
+      <Link>Resources\logo\M.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\L.png">
+      <Link>Resources\logo\L.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\N.png">
+      <Link>Resources\logo\N.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\4.png">
+      <Link>Resources\logo\4.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\B.png">
+      <Link>Resources\logo\B.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\C.png">
+      <Link>Resources\logo\C.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\5.png">
+      <Link>Resources\logo\5.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\7.png">
+      <Link>Resources\logo\7.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\A.png">
+      <Link>Resources\logo\A.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\W.png">
+      <Link>Resources\logo\W.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\6.png">
+      <Link>Resources\logo\6.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\D.png">
+      <Link>Resources\logo\D.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\2.png">
+      <Link>Resources\logo\2.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\R.png">
+      <Link>Resources\logo\R.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\3.png">
+      <Link>Resources\logo\3.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\E.png">
+      <Link>Resources\logo\E.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\G.png">
+      <Link>Resources\logo\G.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\1.png">
+      <Link>Resources\logo\1.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\Q.png">
+      <Link>Resources\logo\Q.png</Link>
+    </BundleResource>
+    <BundleResource Include="..\SubwayConnect\Resources\logo\F.png">
+      <Link>Resources\logo\F.png</Link>
     </BundleResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />

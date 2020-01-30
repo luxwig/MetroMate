@@ -62,16 +62,25 @@ namespace MetroMate
         public NTree(T head)
         {
             Head = new List<NTreeNode<T>>();
-            Head.Add(new NTreeNode<T>(head));
-            Current = Head[0];
             Nodes = new Dictionary<T, NTreeNode<T>>();
+            AddHead(head, true);        
         }
         public NTree(NTreeNode<T> node)
         {
             Head = new List<NTreeNode<T>>();
-            Head.Add(new NTreeNode<T>(node.data, new HashSet<NTreeNode<T>>(), node.child));
-            Current = Head[0];
             Nodes = new Dictionary<T, NTreeNode<T>>();
+            // Head.Add(new NTreeNode<T>(node.data, new HashSet<NTreeNode<T>>(), node.child));
+            // Current = Head[0];
+            AddHead(node, true);
+        }
+        public NTree(List<T> Nodes)
+        {
+            Head = new List<NTreeNode<T>>();
+            this.Nodes = new Dictionary<T, NTreeNode<T>>();
+            AddHead(Nodes[0], true);
+            for (int i = 1; i < Nodes.Count; i++)
+                AddNode(Nodes[i], true);
+            Reset();
         }
 
         public void Reset() { Current = Head[0]; }
@@ -126,6 +135,8 @@ namespace MetroMate
                         Current.child.Add(child);
                     if (!child.parent.Contains(Current))
                         child.parent.Add(Current);
+                    if (Head.Contains(child))
+                        Head.Remove(child);
                     newNode = child;
                 }
             else

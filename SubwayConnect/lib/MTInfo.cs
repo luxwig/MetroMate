@@ -184,6 +184,8 @@ namespace MetroMate
 
         }
 
+        // SEEKING_STOP = 255 means all TripInfo
+
         private static List<TripInfo> GetTripInfos(
             FeedMessage feed, string SEEKING_STOP)
         {
@@ -197,7 +199,7 @@ namespace MetroMate
                     foreach (StopTimeUpdate stopTimeUpdate in ent.TripUpdate.StopTimeUpdates)
                     {
                         
-                        if (string.Equals(stopTimeUpdate.StopId, SEEKING_STOP))
+                        if (string.Equals(stopTimeUpdate.StopId, SEEKING_STOP) || string.Equals((char)255+"", SEEKING_STOP))
                         {
                             tripInfos.Add(new TripInfo(i, ent.TripUpdate.StopTimeUpdates.ToArray(), SEEKING_STOP, ent.TripUpdate.Trip.TripId));
                             break;
@@ -221,7 +223,7 @@ namespace MetroMate
         }
 
         // Refreshflag: 0 Auto, 1 Force Refresh, 2 Force not Refresh
-
+        // If Station str is (char)255, this means all data
         public List<TripInfo> QueryByStation(List<string> Stations, int RefreshFlag = 0)
         {
             List<TripInfo> r = new List<TripInfo>();
@@ -351,6 +353,11 @@ namespace MetroMate
         private readonly List<StationInfo> m_station;
         private readonly Dictionary<string, StationInfo> m_station_map;
 
+        public List<char> Lines {get {
+                List<char> r = m_feedid.Keys.ToList();
+                r.Remove((char)255);
+                return r;
+            } }
         public TransferComplexInfo TransferComplex;
         public List<StationInfo> GetStations() { return m_station; }
         public FeedIDInfo GetFeedIDInfo(string str)
@@ -384,10 +391,64 @@ namespace MetroMate
 
     public class RouteInfo
     {
-        private RTInfos rtinfos;
-        public RouteInfo(RTInfos rtinfos)
+        private RTInfos rtinfo;
+        private MTAInfo src;
+        private Dictionary<string,NTree<string>> map;
+
+        public List<List<string>> GetRoutes(string id)
         {
-            this.rtinfos = rtinfos;
+            if (map.ContainsKey(id))
+                if (map[id] != null)
+                    return map[id].GetAllPathData();
+                else
+                    return new List<List<string>>();
+            else
+                return null;
+        } 
+        public RouteInfo(MTAInfo src, RTInfos rtinfo)
+        {
+            this.src = src;
+            this.rtinfo = rtinfo;
+            map = new Dictionary<string, NTree<string>>();
+        }
+
+        public void Refresh()
+        {
+            List<string> a = new List<string>();
+            a.Add((char)255 + "");
+            List<TripInfo> tripInfos = rtinfo.QueryByStation(a, 1);
+
+            foreach (char _LINE in src.Lines)
+            {
+                List<char> _DIRS = new List<char>();
+                _DIRS.Add('N'); _DIRS.Add('S');
+                foreach (char _DIR in _DIRS)
+                {
+                    string str_id = _LINE.ToString() + _DIR.ToString();
+                    map[str_id] = null;
+                    foreach (TripInfo i in tripInfos)
+                        if (i.Id.IndexOf('_') != -1 &&   // Find the line number
+                            i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
+                            i.Id.IndexOf("..") != -1 && // Find the direction
+                            i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
+                            i.StopTime.Length > 0)
+                            {
+                            NTree<string> t = null;
+                            for (int j = 0; j < i.StopTime.Length; j++) {
+                                if (string.Equals(src.GetStationInfo(i.StopTime[j].StopId).Name, ""))
+                                    continue;
+                                if(t == null)
+                                    t = new NTree<string>(i.StopTime[j].StopId);
+                                else
+                                    t.AddNode(i.StopTime[j].StopId, true);
+                            }
+                            if (map[str_id] == null)
+                                map[str_id] = t;
+                            else
+                                map[str_id].Combine(t);
+                        }
+                }
+            }
         }
     }
 /*

@@ -14,6 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="RouteUnitTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\SubwayConnect\lib\NTree.cs">
       <Link>NTree.cs</Link>
     </Compile>

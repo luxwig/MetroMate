@@ -5,7 +5,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetroMate", "SubwayConnect\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{07A1028F-DCA6-4DBA-855B-01391FF7A03B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTreeUnitTest", "NTreeUnitTest\NTreeUnitTest.csproj", "{C1523D39-A876-4B08-A0A9-422ED4748C09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RouteTreeUnitTest", "NTreeUnitTest\RouteTreeUnitTest.csproj", "{C1523D39-A876-4B08-A0A9-422ED4748C09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

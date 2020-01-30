@@ -438,5 +438,68 @@ namespace NTreeUnitTest
                 // Console.WriteLine();
             }
         }
+
+
+        [Fact]
+        public void CombineTrueRemoveHead()
+        {
+            NTree<string> tree = new NTree<string>();
+            tree.AddHead("A", true);
+            tree.AddNode("B1");
+            tree.AddNode("B2");
+            tree.FindNode("B1");
+            tree.AddNode("C1", true);
+            var D1 = tree.AddNode("D1");
+            tree.FindNode("B2");
+            tree.AddNode("C2", true);
+            tree.AddNode(D1, true);
+            tree.AddNode("E1", true);
+            tree.AddNode("F1", true);
+            tree.AddNode("G1");
+            tree.FindNode("E1");
+            tree.AddNode("F2");
+
+            output.WriteLine("********Init********");
+
+            var p = tree.GetAllPathData();
+            foreach (List<string> l in p)
+            {
+                foreach (var i in l)
+                    output.WriteLine("{0}", i);
+                output.WriteLine("");
+                // Console.WriteLine();
+            }
+
+            output.WriteLine("********Chain1********");
+            NTree<string> chain = new NTree<string>();
+            //chain.AddHead("A", true);
+            //chain.AddNode("B1", true);
+            //chain.AddNode("C1", true);
+            chain.AddHead("X1", true);
+            chain.AddNode("X2", true);
+            chain.AddNode("A", true);
+
+            p = chain.GetAllPathData();
+            foreach (List<string> l in p)
+            {
+                foreach (var i in l)
+                    output.WriteLine("{0}", i);
+                output.WriteLine("");
+                // Console.WriteLine();
+            }
+            Assert.True(tree.Combine(chain));
+
+            output.WriteLine("********Result********");
+
+            p = tree.GetAllPathData();
+            foreach (List<string> l in p)
+            {
+                foreach (var i in l)
+                    output.WriteLine("{0}", i);
+                output.WriteLine("");
+                // Console.WriteLine();
+            }
+
+        }
     }
 }
