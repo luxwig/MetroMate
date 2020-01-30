@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetroMate", "SubwayConnect\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{07A1028F-DCA6-4DBA-855B-01391FF7A03B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTreeUnitTest", "NTreeUnitTest\NTreeUnitTest.csproj", "{C1523D39-A876-4B08-A0A9-422ED4748C09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -29,5 +31,13 @@ Global
 		{07A1028F-DCA6-4DBA-855B-01391FF7A03B}.Debug|iPhone.Build.0 = Debug|iPhone
 		{07A1028F-DCA6-4DBA-855B-01391FF7A03B}.Release|iPhone.ActiveCfg = Release|iPhone
 		{07A1028F-DCA6-4DBA-855B-01391FF7A03B}.Release|iPhone.Build.0 = Release|iPhone
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{C1523D39-A876-4B08-A0A9-422ED4748C09}.Release|iPhone.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
