@@ -10,14 +10,17 @@ namespace MetroMate
         public T data;
         public HashSet<NTreeNode<T>> child { get; set; }
         public HashSet<NTreeNode<T>> parent { get; set; }
+        public int Count;
         public NTreeNode(T data)
         {
+            Count = 1;
             this.data = data;
             this.parent = new HashSet<NTreeNode<T>>();
             this.child = new HashSet<NTreeNode<T>>();
         }
         public NTreeNode(T data, NTreeNode<T> parent, HashSet<NTreeNode<T>> child = null)
         {
+            Count = 1;
             this.data = data;
             this.parent = new HashSet<NTreeNode<T>>();
             this.parent.Add(parent);
@@ -27,6 +30,7 @@ namespace MetroMate
         }
         public NTreeNode(T data, HashSet<NTreeNode<T>> parent, HashSet<NTreeNode<T>> child = null)
         {
+            Count = 1;
             this.data = data;
             this.parent = parent;
             this.child = child;
@@ -138,10 +142,12 @@ namespace MetroMate
                     if (Head.Contains(child))
                         Head.Remove(child);
                     newNode = child;
+                    newNode.Count++;
                 }
             else
             {
                 newNode  = new NTreeNode<T>(child.data, Current, child.child);
+                newNode.Count = child.Count;
                 Current.child.Add(newNode);
             }
 
@@ -181,7 +187,7 @@ namespace MetroMate
 
         // Get all possible path
         // return type list of Node traces
-        public List< List<NTreeNode<T>> > GetAllPath()
+        public List<List<NTreeNode<T>> > GetAllPath()
         {
             List<List<NTreeNode<T>>> r = new List<List<NTreeNode<T>>>();
             foreach (var h in Head)
@@ -191,9 +197,7 @@ namespace MetroMate
         public List<List<T>> GetAllPathData()
         {
 
-            List<List<NTreeNode<T>>> r = new List<List<NTreeNode<T>>>();
-            foreach (var h in Head)
-                r.AddRange(GetAllPathHelper(h, new List<NTreeNode<T>>()));
+            List<List<NTreeNode<T>>> r = GetAllPath();
             List<List<T>> result = new List<List<T>>();
             foreach (var l in r)
             {
@@ -203,6 +207,20 @@ namespace MetroMate
             }
             return result;
         }
+        public List<List<Tuple<int,T>>> GetAllPathDataCount()
+        {
+            List<List<NTreeNode<T>>> r = GetAllPath();
+            List<List<Tuple<int,T>>> result = new List<List<Tuple<int, T>>>();
+            foreach (var l in r)
+            {
+                result.Add(new List<Tuple<int, T>>());
+                foreach (var t in l)
+                    result[result.Count - 1].Add(Tuple.Create(t.Count,t.data));
+            }
+            return result;
+        }
+
+
         private List<List<NTreeNode<T>>> GetAllPathHelper(NTreeNode<T> CurrentNode,
                                                           List<NTreeNode<T>> trace)
         {
@@ -245,7 +263,6 @@ namespace MetroMate
                     NTreeNode<T> n = GetNode(lchain[i].data);
                     AddNode(n, true);
                 }
-
             }
             Reset();
             return true;

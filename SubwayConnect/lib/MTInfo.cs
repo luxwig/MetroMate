@@ -404,7 +404,19 @@ namespace MetroMate
                     return new List<List<string>>();
             else
                 return null;
-        } 
+        }
+
+        public List<List<Tuple<int, string>>> GetRoutesCount(string id)
+        {
+            if (map.ContainsKey(id))
+                if (map[id] != null)
+                    return map[id].GetAllPathDataCount();
+                else
+                    return new List<List<Tuple<int, string>>>();
+            else
+                return null;
+        }
+
         public RouteInfo(MTAInfo src, RTInfos rtinfo)
         {
             this.src = src;
