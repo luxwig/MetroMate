@@ -20,11 +20,7 @@ namespace MetroMate
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UIPageControl pageControl { get; set; }
-
-        [Outlet]
-        [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UITableView tabLine { get; set; }
+        MetroMate.RouteView tabLinex { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
@@ -33,14 +29,9 @@ namespace MetroMate
                 nav_Name = null;
             }
 
-            if (pageControl != null) {
-                pageControl.Dispose ();
-                pageControl = null;
-            }
-
-            if (tabLine != null) {
-                tabLine.Dispose ();
-                tabLine = null;
+            if (tabLinex != null) {
+                tabLinex.Dispose ();
+                tabLinex = null;
             }
         }
     }

@@ -191,6 +191,18 @@
         <Compile Include="RouteLineViewCell.designer.cs">
           <DependentUpon>RouteLineViewCell.cs</DependentUpon>
         </Compile>
+        <Compile Include="RouteView.cs" />
+        <Compile Include="RouteView.designer.cs">
+          <DependentUpon>RouteView.cs</DependentUpon>
+        </Compile>
+        <Compile Include="RoutePageViewController.cs" />
+        <Compile Include="RoutePageViewController.designer.cs">
+          <DependentUpon>RoutePageViewController.cs</DependentUpon>
+        </Compile>
+        <Compile Include="RoutesViewController.cs" />
+        <Compile Include="RoutesViewController.designer.cs">
+          <DependentUpon>RoutesViewController.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
       <BundleResource Include="Resources\ResSummary.json" />

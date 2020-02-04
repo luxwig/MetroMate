@@ -20,6 +20,7 @@ namespace MetroMate
             }
         }
 
+        public int pageIndex { get; set; }
         RouteInfo routes;
         MTAInfo mTAInfo;
         Dictionary<string, List<List<Tuple<int, string>>>> LineRoutes;
@@ -63,15 +64,18 @@ namespace MetroMate
 
             if (string.Equals(segue.Identifier, "showLine"))
             {
-                var lineDetailViewController = segue.DestinationViewController as RouteViewController;
+                var lineDetailViewController = segue.DestinationViewController as RoutePageViewController;
                 var index = tabLine.IndexPathForSelectedRow.Row;
                 if (lineDetailViewController != null)
                 {
-                    
-                    lineDetailViewController.NList = LineRoutes[mTAInfo.Lines[index].ToString() + "N"];
-                    lineDetailViewController.SList = LineRoutes[mTAInfo.Lines[index].ToString() + "S"];
-                    lineDetailViewController.Title = (mTAInfo.Lines[index].ToString());
-                    lineDetailViewController.src = mTAInfo;
+                    lineDetailViewController.SetPages(LineRoutes[mTAInfo.Lines[index].ToString() + "N"],
+                        LineRoutes[mTAInfo.Lines[index].ToString() + "S"],
+                        mTAInfo,
+                        mTAInfo.Lines[index].ToString());
+                    //lineDetailViewController.NList = LineRoutes[mTAInfo.Lines[index].ToString() + "N"];
+                    //lineDetailViewController.SList = LineRoutes[mTAInfo.Lines[index].ToString() + "S"];
+                    //lineDetailViewController.Title = (mTAInfo.Lines[index].ToString());
+                    //lineDetailViewController.src = mTAInfo;
                 }
             }
 
