@@ -49,8 +49,8 @@ namespace SubwayConnectUnitTest
 
             var lines = src.Lines;
                 {
-                string str_id = "QN";
-                    List<List<Tuple<int, string>>> p = route.GetRoutesCount(str_id);
+                string str_id = "6S";
+                    List<List<Tuple<int, string>>> p = route.GetRoutesCountUnique(str_id);
 
                     foreach (var r in p)
                     {
@@ -63,6 +63,8 @@ namespace SubwayConnectUnitTest
                 }
             
         }
+
+
         [Test]
         public void MTAInfoCountUnitTest()
         {

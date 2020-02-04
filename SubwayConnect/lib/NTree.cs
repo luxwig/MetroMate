@@ -219,7 +219,93 @@ namespace MetroMate
             }
             return result;
         }
+        public List<List<Tuple<int, T>>> GetAllPathDataCountUnique()
+        {
 
+            List<List<Tuple<int, T>>> r = new List<List<Tuple<int, T>>>();
+            List<List<NTreeNode<T>>> rN = new List<List<NTreeNode<T>>>();
+            foreach (var h in Head)
+            {
+                // create a new final list 
+                List<List<NTreeNode<T>>> finalLists = new List<List<NTreeNode<T>>>();
+                var rawLists = GetAllPathHelper(h, new List<NTreeNode<T>>());
+                foreach(var rawList in rawLists)
+                {
+                    //create raw set
+                    HashSet<T> rawSet = new HashSet<T>();
+                    foreach (NTreeNode<T> node in rawList)
+                        rawSet.Add(node.data);
+
+                    // for each final list candidate
+                    bool flagHasCombined = false;
+                    bool flagHasNotBeenAdded = true;
+                    for (int i = 0; i<finalLists.Count;  i ++)
+                    {
+                        var finalList = finalLists[i];
+                        //create final set
+                        HashSet<T> finalSet = new HashSet<T>();
+                        foreach (NTreeNode<T> node in finalList)
+                            finalSet.Add(node.data);
+                        if (!finalSet.IsSupersetOf(rawSet))
+                        {
+                            // raw set is bigger
+                            if (rawSet.IsSupersetOf(finalSet))
+                            {
+                                finalLists[i] = rawList;
+                                flagHasCombined = true;
+                                flagHasNotBeenAdded = false;
+                            }
+                        }
+                        // raw set is subset
+                        else
+                        {
+                            flagHasNotBeenAdded = false;
+                            break;
+                        }
+                    }
+
+                    if (flagHasNotBeenAdded)
+                        finalLists.Add(rawList);
+                    while (flagHasCombined)
+                    {
+                        flagHasCombined = false;
+                        for (int i = 0; i < finalLists.Count; i++)
+                        {
+                            HashSet<T> outerSet = new HashSet<T>();
+                            foreach (NTreeNode<T> node in finalLists[i])
+                                outerSet.Add(node.data);
+                            for (int j = i+1; j < finalLists.Count; j++)
+                            {
+                                HashSet<T> innerSet = new HashSet<T>();
+                                foreach (NTreeNode<T> node in finalLists[j])
+                                    innerSet.Add(node.data);
+                                if (outerSet.IsSupersetOf(innerSet))
+                                {
+                                    finalLists.RemoveAt(j);
+                                    j--;
+                                    continue;
+                                }
+                                if (outerSet.IsSubsetOf(innerSet))
+                                {
+                                    finalLists.RemoveAt(i);
+                                    flagHasCombined = true;
+                                }
+                            }
+                            if (flagHasCombined) break;
+                        }
+                    }
+                    
+                }
+                rN.AddRange(finalLists);
+            }
+            foreach(var chain in rN)
+            {
+                r.Add(new List<Tuple<int, T>>());
+                foreach(var node in chain)
+                    r[r.Count - 1].Add(Tuple.Create(node.Count, node.data));
+            }
+            return r;
+        }
 
         private List<List<NTreeNode<T>>> GetAllPathHelper(NTreeNode<T> CurrentNode,
                                                           List<NTreeNode<T>> trace)

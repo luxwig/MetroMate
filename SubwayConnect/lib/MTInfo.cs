@@ -406,6 +406,17 @@ namespace MetroMate
                 return null;
         }
 
+        public List<List<Tuple<int, string>>> GetRoutesCountUnique(string id)
+        {
+            if (map.ContainsKey(id))
+                if (map[id] != null)
+                    return map[id].GetAllPathDataCountUnique();
+                else
+                    return new List<List<Tuple<int, string>>>();
+            else
+                return null;
+        }
+
         public List<List<Tuple<int, string>>> GetRoutesCount(string id)
         {
             if (map.ContainsKey(id))
@@ -422,6 +433,7 @@ namespace MetroMate
             this.src = src;
             this.rtinfo = rtinfo;
             map = new Dictionary<string, NTree<string>>();
+            Refresh();
         }
 
         public void Refresh()

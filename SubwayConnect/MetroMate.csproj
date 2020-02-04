@@ -175,6 +175,22 @@
         </Compile>
         <Compile Include="UITableViewRefreshController.cs" />
         <Compile Include="lib\NTree.cs" />
+        <Compile Include="RouteViewController.cs" />
+        <Compile Include="RouteViewController.designer.cs">
+          <DependentUpon>RouteViewController.cs</DependentUpon>
+        </Compile>
+        <Compile Include="RouteStopViewCell.cs" />
+        <Compile Include="RouteStopViewCell.designer.cs">
+          <DependentUpon>RouteStopViewCell.cs</DependentUpon>
+        </Compile>
+        <Compile Include="RouteLineViewController.cs" />
+        <Compile Include="RouteLineViewController.designer.cs">
+          <DependentUpon>RouteLineViewController.cs</DependentUpon>
+        </Compile>
+        <Compile Include="RouteLineViewCell.cs" />
+        <Compile Include="RouteLineViewCell.designer.cs">
+          <DependentUpon>RouteLineViewCell.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
     <ItemGroup>
       <BundleResource Include="Resources\ResSummary.json" />
@@ -201,6 +217,8 @@
       <BundleResource Include="Resources\logo\Q.png" />
       <BundleResource Include="Resources\logo\F.png" />
       <BundleResource Include="Resources\transfer.csv" />
+      <BundleResource Include="Resources\logo\J.png" />
+      <BundleResource Include="Resources\logo\Z.png" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
