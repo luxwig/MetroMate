@@ -203,6 +203,7 @@
         <Compile Include="RoutesViewController.designer.cs">
           <DependentUpon>RoutesViewController.cs</DependentUpon>
         </Compile>
+        <Compile Include="lib\MTInfoException.cs" />
     </ItemGroup>
     <ItemGroup>
       <BundleResource Include="Resources\ResSummary.json" />

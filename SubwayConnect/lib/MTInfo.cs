@@ -8,7 +8,6 @@ using StopTimeUpdate = TransitRealtime.TripUpdate.StopTimeUpdate;
 using Foundation;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Collections;
 using System.IO;
 using CsvHelper.Configuration.Attributes;
 using System.Linq;
@@ -19,7 +18,10 @@ using Xamarin.Essentials;
 
 namespace MetroMate
 {
-    
+
+    /// <summary>
+    /// Station infomation
+    /// </summary>
     public class StationInfo:IComparable, IComparable<StationInfo>
     {
         [Name("stop_id")]
@@ -30,6 +32,8 @@ namespace MetroMate
 
         [Name("parent_station")]
         public string Parents { get; set; }
+
+        // Constructor 
         public StationInfo()
         {
             ID = ""; Name = ""; Parents = "";
@@ -41,6 +45,8 @@ namespace MetroMate
             Parents = parents;
         }
 
+
+        // Compare
         public int CompareTo(object obj)
         {
             return
@@ -58,27 +64,36 @@ namespace MetroMate
     }
 
 
+    /// <summary>
+    /// Transfer information
+    /// </summary>
     public class TransferInfo
     {
         [Name("from_stop_id")]
-        public string From_stop { get; set; }
+        public string FromStop { get; set; }
 
         [Name("to_stop_id")]
-        public string To_stop { get; set; }
+        public string ToStop { get; set; }
+
+        // Constructor
         public TransferInfo()
         {
-            From_stop = To_stop = "";
+            FromStop = ToStop = "";
         }
-        public TransferInfo(string From_stop, string To_stop)
+        public TransferInfo(string fromStop, string toStop)
         {
-            this.From_stop = From_stop;
-            this.To_stop = To_stop;
+            FromStop = fromStop;
+            ToStop = toStop;
         }
     }
 
-
+    /// <summary>
+    /// Trip information
+    /// </summary>
     public class TripInfo : IComparable, IComparable<TripInfo>
     {
+
+        // Constructor
         public TripInfo(int index, StopTimeUpdate[] stopTime, string refStop, string id)
         {
             Index = index;
@@ -92,16 +107,21 @@ namespace MetroMate
         }
 
         protected long est;
+
+        public int Count { get { return StopTime.Length; } }
         public long GetTargetLongTime { get { return est; } }
         public DateTime GetTargetTime { get {
                 DateTimeOffset dtf = DateTimeOffset.FromUnixTimeSeconds(est).ToLocalTime();
                 return dtf.DateTime;
             } }
-        public int Count { get { return StopTime.Length; } }
-        public int Index { get; set; }
-        public StopTimeUpdate[] StopTime { get; set; }
-        public string RefStop { get; set; }
+
         public string Id { get; set; }
+        public int Index { get; set; }
+        public string RefStop { get; set; }
+        public StopTimeUpdate[] StopTime { get; set; }
+        
+
+        //Compare
         public int CompareTo(object obj)
         {
             if (est < (obj as TripInfo).est)
@@ -121,11 +141,19 @@ namespace MetroMate
         }
     }
 
+
+    /// <summary>
+    /// Feed information - Store ID with the name in the JSON
+    /// </summary>
     public class FeedIDInfo
     {
+        /// <summary>ID in JSON</summary>
         public readonly List<string> FeedID;
+        /// <summary>Name in JSON</summary>
         public readonly string Abb;
-        public FeedIDInfo(char[] feedid, String abb)
+
+        // Constructor
+        public FeedIDInfo(char[] feedid, string abb)
         {
             FeedID = new List<string>();
             foreach (int i in feedid)
@@ -134,22 +162,40 @@ namespace MetroMate
         }
     }
 
-
+    /// <summary>
+    /// Real time information
+    /// </summary>
     public class RTInfos
     {
+
+        /// <summary>
+        /// Cashe for feed message
+        /// Refresh() has to be called before any other actions
+        /// </summary>
         private struct FeedMessageCashe
         {
             public FeedMessage Feed;
             public DateTime Timestamp;
             public FeedMessageCashe(FeedMessage Feed, DateTime Timestamp) { this.Feed = Feed; this.Timestamp = Timestamp; }
         }
+
         private MTAInfo src;
-        private HashSet<string> LastQuery;
+        private HashSet<string> lastQuery;
+        private Dictionary<string, FeedMessageCashe> cacheFeed;
+
+        // Constructor
         public RTInfos(MTAInfo src)
         {
             this.src = src;
-            CacheFeed = new Dictionary<string, FeedMessageCashe>();
+            cacheFeed = new Dictionary<string, FeedMessageCashe>();
         }
+
+        /// <summary>
+        /// Get the feed from url path
+        /// </summary>
+        /// <exception cref="FeedMessageException">
+        /// Rethrow any exception when getting url failed
+        /// </exception>
         private static FeedMessage GetFeed(string path)
         {
             var req = WebRequest.Create(path);
@@ -175,8 +221,32 @@ namespace MetroMate
             }
             return feed;
         }
-        private Dictionary<string, FeedMessageCashe> CacheFeed;
+        private static List<TripInfo> GetTripInfos(
+            FeedMessage feed, string seekStop)
+        {
+            // seekingStop = 255 all stops
+            List<TripInfo> tripInfos = new List<TripInfo>();
+            foreach (FeedEntity ent in feed.Entities)
+            {
+                if (ent.TripUpdate != null &&
+                    ent.TripUpdate.StopTimeUpdates.Count != 0)
+                {
+                    int i = 0;
+                    foreach (StopTimeUpdate stopTimeUpdate in ent.TripUpdate.StopTimeUpdates)
+                    {
 
+                        if (string.Equals(stopTimeUpdate.StopId, seekStop) || string.Equals((char)255 + "", seekStop))
+                        {
+                            tripInfos.Add(new TripInfo(i, ent.TripUpdate.StopTimeUpdates.ToArray(), seekStop, ent.TripUpdate.Trip.TripId));
+                            break;
+                        }
+                        i += 1;
+                    }
+
+                }
+            }
+            return tripInfos;
+        }
 
         public static DateTime StopLongTimeToDateTime(StopTimeUpdate stop)
         {
@@ -189,44 +259,21 @@ namespace MetroMate
 
         }
 
-        // SEEKING_STOP = 255 means all TripInfo
-
-        private static List<TripInfo> GetTripInfos(
-            FeedMessage feed, string SEEKING_STOP)
-        {
-            List<TripInfo> tripInfos = new List<TripInfo>();
-            foreach (FeedEntity ent in feed.Entities)
-            {
-                if (ent.TripUpdate != null &&
-                    ent.TripUpdate.StopTimeUpdates.Count != 0)
-                {
-                    int i = 0;
-                    foreach (StopTimeUpdate stopTimeUpdate in ent.TripUpdate.StopTimeUpdates)
-                    {
-                        
-                        if (string.Equals(stopTimeUpdate.StopId, SEEKING_STOP) || string.Equals((char)255+"", SEEKING_STOP))
-                        {
-                            tripInfos.Add(new TripInfo(i, ent.TripUpdate.StopTimeUpdates.ToArray(), SEEKING_STOP, ent.TripUpdate.Trip.TripId));
-                            break;
-                        }
-                        i += 1;
-                    }
-
-                }
-            }
-            return tripInfos;
-        }
-
-
-
+        /// <summary>Refresh data in last query</summary>
+        /// <exception cref="FeedFetchException">
+        /// When one of the feed requests is failed,
+        /// the rest of the feed requests would still be processed.
+        /// After all requests are processed,
+        /// FeedFetchException is retrhown
+        /// </exception>   
         public void Refresh()
         {
             FeedFetchException feedE = null;
-            foreach (string url in LastQuery){
+            foreach (string url in lastQuery){
                 try
                 {
                     Console.WriteLine("Refreshing {0}", url);
-                    CacheFeed[url] = new FeedMessageCashe(GetFeed(url), DateTime.Now);
+                    cacheFeed[url] = new FeedMessageCashe(GetFeed(url), DateTime.Now);
                 }
                 catch (FeedMessageException e)
                 {
@@ -237,29 +284,43 @@ namespace MetroMate
             if (feedE != null) throw feedE;
         }
 
-        // Refreshflag: 0 Auto, 1 Force Refresh, 2 Force not Refresh
-        // If Station str is (char)255, this means all data
-        public List<TripInfo> QueryByStation(List<string> Stations,  out List<TripInfo> result, int RefreshFlag = 0)
+        /// <summary>
+        /// Get trip information based on stations iD
+        /// </summary>
+        /// <param name="stations">List of station ID. If id is (char)255, this means all data</param>
+        /// <param name="result">
+        /// List of TripInfo conatins trip informations requested.
+        /// Same as return value. Used when the exceptions are raised
+        /// </param>
+        /// <param name="refreshFlag">0 Auto, 1 Force Refresh, 2 Force not Refresh</param>
+        /// <returns>List of TripInfo conatins trip informations requested</returns>
+        /// <exception cref="FeedFetchException">
+        /// When one of the requests is failed,
+        /// the rest of the requests would still be processed.
+        /// After all requests are processed,
+        /// FeedFetchException is retrhown
+        /// </exception> 
+        public List<TripInfo> QueryByStation(List<string> stations,  out List<TripInfo> result, int refreshFlag = 0)
         {
             List<TripInfo> r = new List<TripInfo>();
-            LastQuery = new HashSet<string>();
+            lastQuery = new HashSet<string>();
             FeedFetchException feedE = null;
-            foreach (string station in Stations)
+            foreach (string station in stations)
             {
                 foreach (string url in src.GetFeedURL(station))
                 {
-                    LastQuery.Add(url);
-                    if (CacheFeed.ContainsKey(url))
-                        Console.WriteLine("Cashe Time {0}", (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds);
-                    if (!CacheFeed.ContainsKey(url) ||
-                        ((DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30 && RefreshFlag != 2) ||
-                        RefreshFlag == 1)
+                    lastQuery.Add(url);
+                    if (cacheFeed.ContainsKey(url))
+                        Console.WriteLine("Cashe Time {0}", (DateTime.Now - cacheFeed[url].Timestamp).TotalSeconds);
+                    if (!cacheFeed.ContainsKey(url) ||
+                        ((DateTime.Now - cacheFeed[url].Timestamp).TotalSeconds > 30 && refreshFlag != 2) ||
+                        refreshFlag == 1)
                     {
                         try
                         {
                             Console.WriteLine("Refreshing {0}", url);
                             FeedMessage feed = GetFeed(url);
-                            CacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
+                            cacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
                         }
                         catch (FeedMessageException e)
                         {
@@ -267,8 +328,8 @@ namespace MetroMate
                             feedE.AddException(e, src.GetLineNameFromURL(url));
                         }
                     }
-                    if (CacheFeed.ContainsKey(url))
-                        r.AddRange(GetTripInfos(CacheFeed[url].Feed, station));
+                    if (cacheFeed.ContainsKey(url))
+                        r.AddRange(GetTripInfos(cacheFeed[url].Feed, station));
                 }
             }
             r.Sort();
@@ -280,8 +341,74 @@ namespace MetroMate
 
     public class MTAInfo
     {
+        private struct JSONFeed
+        {
+            public char[] Idef;
+            public string Name;
+            public char[] ID;
+        }
+        private struct JSONColor
+        {
+            public char[] Idef;
+            public string Name;
+            public string Color;
+        }
+        private struct JSONFeedInv
+        {
+            public char[] Idef;
+            public string Name;
+            public int ID;
+        }
+        public class TransferComplexInfo
+        {
+#if DEBUG
+            public Dictionary<string, List<string>> transferMap;
+#else
+            private Dictionary<string, List<string>> transfer_map;
+#endif
+            // Constructor
+            public TransferComplexInfo(List<TransferInfo> infos)
+            {
+                transferMap = new Dictionary<string, List<string>>();
+                foreach (var Info in infos)
+                {
+                    if (!string.Equals(Info.FromStop, Info.ToStop))
+                    {
+                        if (transferMap.ContainsKey(Info.FromStop))
+                            transferMap[Info.FromStop].Add(Info.ToStop);
+                        else
+                            transferMap.Add(Info.FromStop, new List<string>() { Info.ToStop });
+                        if (transferMap.ContainsKey(Info.ToStop))
+                            transferMap[Info.ToStop].Add(Info.FromStop);
+                        else
+                            transferMap.Add(Info.ToStop, new List<string>() { Info.FromStop });
+                    }
+                }
+            }
 
-        public MTAInfo(string Filename) : this(MTAInfo.ToDict(Filename)) { }
+            public List<string> GetTransferStations(string station)
+            {
+                string s = station;
+                if (char.IsLetter(station[station.Length - 1]))
+                    s = station.Substring(0, station.Length - 1);
+                if (transferMap.ContainsKey(s))
+                    return transferMap[s];
+                else
+                    return new List<string>();
+            }
+        }
+
+        private readonly string m_key;
+        private readonly List<string> m_URL;
+        private readonly List<StationInfo> m_station;
+        private readonly Dictionary<string, StationInfo> m_station_map;
+        private readonly Dictionary<char, UIColor> m_color_map;
+        private readonly Dictionary<char, FeedIDInfo> m_feedid;
+        private readonly Dictionary<string, string> m_feedid_inv;
+        
+
+        // Constructor 
+        public MTAInfo(string filename) : this(ToDict(filename)) { }
         public MTAInfo(Dictionary<string, List<string>> dict)
         {
             if (dict.ContainsKey("FeedID"))
@@ -324,8 +451,8 @@ namespace MetroMate
                 m_color_map = new Dictionary<char, UIColor>();
                 string path = NSBundle.MainBundle.PathForResource(dict["Color"][0], "");
                 string text = System.IO.File.ReadAllText(path);
-                JSONColorFeed[] jsonfeed = JsonConvert.DeserializeObject<JSONColorFeed[]>(text);
-                foreach (JSONColorFeed j in jsonfeed)
+                JSONColor[] jsonfeed = JsonConvert.DeserializeObject<JSONColor[]>(text);
+                foreach (JSONColor j in jsonfeed)
                     foreach (char c in j.Idef)
                     {
                         var color = ColorConverters.FromHex("#" + j.Color);
@@ -345,7 +472,13 @@ namespace MetroMate
             }
         }
 
-        
+        private static Dictionary<string, List<string>> ToDict(string Filename)
+        {
+            string path = NSBundle.MainBundle.PathForResource(Filename, "");
+            string text = System.IO.File.ReadAllText(path);
+            return JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(text);
+        }
+
         public static List<string> AddBothDirc(List<string> list)
         {
             HashSet<string> r = new HashSet<string>();
@@ -364,87 +497,16 @@ namespace MetroMate
             }
             return r.ToList();
         }
-
-        public class TransferComplexInfo
+        public List<char> Lines
         {
-#if DEBUG
-            public Dictionary<string, List<string>> transfer_map;
-#else
-            private Dictionary<string, List<string>> transfer_map;
-#endif
-            public TransferComplexInfo(List<TransferInfo> infos)
+            get
             {
-                transfer_map = new Dictionary<string, List<string>>();
-                foreach (var Info in infos)
-                {
-                    if (!string.Equals(Info.From_stop, Info.To_stop))
-                    {
-                        if (transfer_map.ContainsKey(Info.From_stop))
-                            transfer_map[Info.From_stop].Add(Info.To_stop);
-                        else
-                            transfer_map.Add(Info.From_stop, new List<string>() { Info.To_stop });
-                        if (transfer_map.ContainsKey(Info.To_stop))
-                            transfer_map[Info.To_stop].Add(Info.From_stop);
-                        else
-                            transfer_map.Add(Info.To_stop, new List<string>() { Info.From_stop });
-                    }
-                }
-            }
-
-            public List<string> GetTransferStations(string station)
-            {
-                string s = station;
-                if (char.IsLetter(station[station.Length - 1]))
-                    s = station.Substring(0, station.Length - 1);
-                if (transfer_map.ContainsKey(s))
-                    return transfer_map[s];
-                else
-                    return new List<string>() ;
-            }
-        }
-
-        private struct JSONFeed
-        {
-            public char[] Idef;
-            public string Name;
-            public char[] ID;
-        }
-
-        private struct JSONColorFeed
-        {
-            public char[] Idef;
-            public string Name;
-            public string Color;
-        }
-
-        private struct JSONFeedInv
-        {
-            public char[] Idef;
-            public string Name;
-            public int ID;
-        }
-
-        private static Dictionary<string, List<string>> ToDict(string Filename)
-        {
-            string path = NSBundle.MainBundle.PathForResource(Filename, "");
-            string text = System.IO.File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(text);
-        }
-
-        private readonly string  m_key;
-        private readonly List<string> m_URL;
-        private readonly List<StationInfo> m_station;
-        private readonly Dictionary<string, StationInfo> m_station_map;
-        private readonly Dictionary<char, UIColor> m_color_map;
-        private readonly Dictionary<char, FeedIDInfo> m_feedid;
-        private readonly Dictionary<string, string> m_feedid_inv;
-
-        public List<char> Lines {get {
                 List<char> r = m_feedid.Keys.ToList();
                 r.Remove((char)255);
                 return r;
-            } }
-        public TransferComplexInfo TransferComplex;
+            }
+        }
+        public TransferComplexInfo TransferComplex { get; set; }
         public List<StationInfo> GetStations() { return m_station; }
         public UIColor GetLineColor(char c)
         {
@@ -592,49 +654,5 @@ namespace MetroMate
         }
     }
 
-    public class FeedMessageException : Exception
-    {
-        public FeedMessageException() : base() { }
-        public FeedMessageException(Exception e) : base(e.Message, e.InnerException) { }
-    }
-
-    public class FeedFetchException : Exception
-    {
-        public FeedFetchException() : base()
-        {
-            LineStr = new List<string>();
-            ExceptionStr = new List<string>();
-        }
-
-        private List<string> LineStr;
-        private List<string> ExceptionStr;
-        public override string Message
-        {
-            get {
-                string s = "Invalid feed occur at:";
-                for (int i = 0; i < LineStr.Count; i++)
-                    s += ("\n" + LineStr[i] + "\t" + ExceptionStr[i]);
-                return s;
-            }
-        }
-        public void AddException(Exception e, string LineStr)
-        {
-            if (this.LineStr.Contains(LineStr))
-                return;
-            this.LineStr.Add(LineStr);
-            ExceptionStr.Add(e.Message);
-        }
-
-        public void ShowAlert(UIViewController v)
-        {
-            //Create Alert
-            var okAlertController = UIAlertController.Create("ERROR", Message , UIAlertControllerStyle.Alert);
-
-            //Add Action
-            okAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
-
-            // Present Alert
-            v.PresentViewController(okAlertController, true, null);
-        }
-    }
+    
 }
