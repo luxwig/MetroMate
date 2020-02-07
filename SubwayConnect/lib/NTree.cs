@@ -219,13 +219,13 @@ namespace MetroMate
             }
             return result;
         }
-        public List<List<Tuple<int, T>>> GetAllPathDataCountUnique()
+        public List<List<Tuple<int, T>>> GetAllPathDataCountUnique(out Tuple<HashSet<T>,HashSet<T>> ht)
         {
-
             List<List<Tuple<int, T>>> r = new List<List<Tuple<int, T>>>();
             List<List<NTreeNode<T>>> rN = new List<List<NTreeNode<T>>>();
             foreach (var h in Head)
             {
+                
                 // create a new final list 
                 List<List<NTreeNode<T>>> finalLists = new List<List<NTreeNode<T>>>();
                 var rawLists = GetAllPathHelper(h, new List<NTreeNode<T>>());
@@ -298,12 +298,16 @@ namespace MetroMate
                 }
                 rN.AddRange(finalLists);
             }
-            foreach(var chain in rN)
+            HashSet<T> set_head = new HashSet<T>(), set_tail = new HashSet<T>();
+            foreach (var chain in rN)
             {
+                set_head.Add(chain[0].data);
+                set_tail.Add(chain[chain.Count-1].data);
                 r.Add(new List<Tuple<int, T>>());
                 foreach(var node in chain)
                     r[r.Count - 1].Add(Tuple.Create(node.Count, node.data));
             }
+            ht = Tuple.Create(set_head, set_tail);
             return r;
         }
 

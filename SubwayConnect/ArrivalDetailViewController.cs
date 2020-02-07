@@ -8,7 +8,7 @@ namespace MetroMate
 {
     public partial class ArrivalDetailViewController : UIViewController
     {
-        
+        public FeedFetchException SagueE = null;
         public List<TripInfo> TripInfos;
         public RTInfos rtinfo;
         public MTAInfo src;
@@ -26,6 +26,8 @@ namespace MetroMate
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
+            if (SagueE != null)
+                SagueE.ShowAlert(this);
             ATVS =  new ArrivalDetailTVS(TripInfos,src, this, RefTime);
             ArrTimeTable.Source = ATVS;
             ArrTimeTable.RowHeight = 110;
@@ -84,7 +86,10 @@ namespace MetroMate
         private UIRefreshControl RefreshControl;
         private bool useRefreshControl = false;
         protected void RefreshAsyncFunc() { ArrTimeTable.ReloadData(); }
-        protected void UpdateDataItem() { rtinfo.Refresh(); }
+        protected void UpdateDataItem()
+        {
+            try { rtinfo.Refresh(); } catch (FeedFetchException e) { e.ShowAlert(this); }
+        } 
         protected UIRefreshControl GetRefreshControl() { return RefreshControl; }
 
         private async Task RefreshAsync()

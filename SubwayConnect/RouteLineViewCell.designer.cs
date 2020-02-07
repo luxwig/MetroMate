@@ -24,7 +24,7 @@ namespace MetroMate
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel lbl_NBcount { get; set; }
+        UIKit.UILabel lbl_NBvia { get; set; }
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
@@ -32,7 +32,7 @@ namespace MetroMate
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
-        UIKit.UILabel lbl_SBcount { get; set; }
+        UIKit.UILabel lbl_SBvia { get; set; }
 
         void ReleaseDesignerOutlets ()
         {
@@ -46,9 +46,9 @@ namespace MetroMate
                 lbl_NB = null;
             }
 
-            if (lbl_NBcount != null) {
-                lbl_NBcount.Dispose ();
-                lbl_NBcount = null;
+            if (lbl_NBvia != null) {
+                lbl_NBvia.Dispose ();
+                lbl_NBvia = null;
             }
 
             if (lbl_SB != null) {
@@ -56,9 +56,9 @@ namespace MetroMate
                 lbl_SB = null;
             }
 
-            if (lbl_SBcount != null) {
-                lbl_SBcount.Dispose ();
-                lbl_SBcount = null;
+            if (lbl_SBvia != null) {
+                lbl_SBvia.Dispose ();
+                lbl_SBvia = null;
             }
         }
     }

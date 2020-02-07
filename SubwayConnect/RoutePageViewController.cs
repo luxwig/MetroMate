@@ -18,11 +18,14 @@ namespace MetroMate
 
 		public RoutePageViewController (IntPtr handle) : base (handle)
         {
-			UIPageControl.Appearance.BackgroundColor = UIColor.SystemBackgroundColor;
-			UIPageControl.Appearance.CurrentPageIndicatorTintColor = UIColor.SystemBlueColor;
-			UIPageControl.Appearance.PageIndicatorTintColor = UIColor.SecondaryLabelColor;
 			pages = new List<RouteViewController>();
+            DidFinishAnimating += RoutePageViewController_DidFinishAnimating;
 		}
+
+        private void RoutePageViewController_DidFinishAnimating(object sender, UIPageViewFinishedAnimationEventArgs e)
+        {
+			Title = ViewControllers[0].Title;
+        }
 
         public void SetPages(List<List<Tuple<int, string>>> NList,
                             List<List<Tuple<int, string>>> SList,
@@ -38,7 +41,7 @@ namespace MetroMate
             foreach (var listStop in NList)
             {
 				var a = Storyboard.InstantiateViewController("RVC") as RouteViewController;
-				a.SetViewer(listStop, src, 0, i++, MAXVALUE);
+				a.SetViewer(listStop, src, 0, i++, MAXVALUE, titleName[0]);
                 pages.Add(a);
 			}
 
@@ -50,28 +53,34 @@ namespace MetroMate
 			foreach (var listStop in SList)
 			{
 				var a = Storyboard.InstantiateViewController("RVC") as RouteViewController;
-				a.SetViewer(listStop, src, 1, i++, MAXVALUE);
+				a.SetViewer(listStop, src, 1, i++, MAXVALUE, titleName[0]);
 				pages.Add(a);
 			}
 			this.titleName = titleName;
-			Title = titleName + (pages[0].Bound == 0 ? " N/B" : " S/B");
-			View.BackgroundColor = (UIColor.SystemBackgroundColor);
-            
+			this.src = src;
+			nfloat H, B, S, A;
+			UIColor color = src.GetLineColor(titleName[0]);
+			// color.GetHSBA(out H, out S, out B, out A);
+			// UIPageControl.Appearance.BackgroundColor = UIColor.FromHSBA(H, S, B * (nfloat)1.1, A);
+			UIPageControl.Appearance.BackgroundColor = UIColor.SystemBackgroundColor;
+			UIPageControl.Appearance.CurrentPageIndicatorTintColor = UIColor.SystemBlueColor;
+			UIPageControl.Appearance.PageIndicatorTintColor = UIColor.SecondaryLabelColor;
 		}
 		private List<RouteViewController> pages;
         public RouteViewController ViewControllerAtIndex(int index)
         {
-			Title = titleName + (pages[index].Bound == 0 ? " N/B" : " S/B");
+			// Title = titleName + (pages[index].Bound == 0 ? " N/B" : " S/B");
 			return pages[index];
         }
 
 		public override void ViewDidLoad()
         {
             base.ViewDidLoad();
-			this.DataSource = new PageViewControllerDataSource(this, pages.Count);
+			DataSource = new PageViewControllerDataSource(this, pages.Count);
 			var VC = new RouteViewController[1];
 			VC[0] = pages[0];
-			this.SetViewControllers(VC, UIPageViewControllerNavigationDirection.Forward, false, null);
+			Title = titleName + (pages[0].Bound == 0 ? " N/B" : " S/B");
+			SetViewControllers(VC, UIPageViewControllerNavigationDirection.Forward, false, null);
 		}
 
 		private class PageViewControllerDataSource : UIPageViewControllerDataSource

@@ -42,7 +42,7 @@ namespace MetroMate
 
 
     class ArrivalDetailTVS : UITableViewSource
-    {
+    { 
         public List<TripInfo> tripInfos;
         public List<TripInfo> filteredInfos;
         public MTAInfo src;

@@ -15,6 +15,8 @@ using System.Linq;
 using System.Net;
 using UIKit;
 
+using Xamarin.Essentials;
+
 namespace MetroMate
 {
     
@@ -159,7 +161,10 @@ namespace MetroMate
                 response = (HttpWebResponse)req.GetResponse();
                 dataStream = response.GetResponseStream();
                 feed = Serializer.Deserialize<FeedMessage>(dataStream);
-
+            }
+            catch (Exception e)
+            {
+                throw new FeedMessageException(e);
             }
             finally
             {
@@ -216,21 +221,33 @@ namespace MetroMate
 
         public void Refresh()
         {
+            FeedFetchException feedE = null;
             foreach (string url in LastQuery){
-                Console.WriteLine("Refreshing {0}", url);
-                CacheFeed[url] = new FeedMessageCashe(GetFeed(url), DateTime.Now);
+                try
+                {
+                    Console.WriteLine("Refreshing {0}", url);
+                    CacheFeed[url] = new FeedMessageCashe(GetFeed(url), DateTime.Now);
+                }
+                catch (FeedMessageException e)
+                {
+                    if (feedE == null) feedE = new FeedFetchException();
+                    feedE.AddException(e, src.GetLineNameFromURL(url));
+                }
             }
+            if (feedE != null) throw feedE;
         }
 
         // Refreshflag: 0 Auto, 1 Force Refresh, 2 Force not Refresh
         // If Station str is (char)255, this means all data
-        public List<TripInfo> QueryByStation(List<string> Stations, int RefreshFlag = 0)
+        public List<TripInfo> QueryByStation(List<string> Stations,  out List<TripInfo> result, int RefreshFlag = 0)
         {
             List<TripInfo> r = new List<TripInfo>();
             LastQuery = new HashSet<string>();
+            FeedFetchException feedE = null;
             foreach (string station in Stations)
             {
-                foreach (string url in src.GetFeedURL(station)) {
+                foreach (string url in src.GetFeedURL(station))
+                {
                     LastQuery.Add(url);
                     if (CacheFeed.ContainsKey(url))
                         Console.WriteLine("Cashe Time {0}", (DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds);
@@ -238,14 +255,25 @@ namespace MetroMate
                         ((DateTime.Now - CacheFeed[url].Timestamp).TotalSeconds > 30 && RefreshFlag != 2) ||
                         RefreshFlag == 1)
                     {
-                        Console.WriteLine("Refreshing {0}", url);
-                        FeedMessage feed = GetFeed(url);
-                        CacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
+                        try
+                        {
+                            Console.WriteLine("Refreshing {0}", url);
+                            FeedMessage feed = GetFeed(url);
+                            CacheFeed[url] = new FeedMessageCashe(feed, DateTime.Now);
+                        }
+                        catch (FeedMessageException e)
+                        {
+                            if (feedE == null) feedE = new FeedFetchException();
+                            feedE.AddException(e, src.GetLineNameFromURL(url));
+                        }
                     }
-                    r.AddRange(GetTripInfos(CacheFeed[url].Feed, station));
+                    if (CacheFeed.ContainsKey(url))
+                        r.AddRange(GetTripInfos(CacheFeed[url].Feed, station));
                 }
             }
             r.Sort();
+            result = r;
+            if (feedE != null) throw feedE;
             return r;
         }
     }
@@ -281,9 +309,6 @@ namespace MetroMate
                 m_station_map = m_station.ToDictionary(x => x.ID, x => x);
             }
 
-
-         
-
             if (dict.ContainsKey("Transfer"))
             {
                 string path = NSBundle.MainBundle.PathForResource(dict["Transfer"][0], "");
@@ -293,9 +318,52 @@ namespace MetroMate
                 TransferComplex = new  TransferComplexInfo(x);
                 reader.Close();
             }
+
+            if (dict.ContainsKey("Color"))
+            {
+                m_color_map = new Dictionary<char, UIColor>();
+                string path = NSBundle.MainBundle.PathForResource(dict["Color"][0], "");
+                string text = System.IO.File.ReadAllText(path);
+                JSONColorFeed[] jsonfeed = JsonConvert.DeserializeObject<JSONColorFeed[]>(text);
+                foreach (JSONColorFeed j in jsonfeed)
+                    foreach (char c in j.Idef)
+                    {
+                        var color = ColorConverters.FromHex("#" + j.Color);
+                        UIColor uIColor = UIColor.FromRGBA(color.R, color.G, color.B, color.A);
+                        m_color_map.Add(c, uIColor);
+                    }
+            }
+
+            if (dict.ContainsKey("FeedIDInd"))
+            {
+                m_feedid_inv = new Dictionary<string, string>();
+                string path = NSBundle.MainBundle.PathForResource(dict["FeedIDInd"][0], "");
+                string text = System.IO.File.ReadAllText(path);
+                JSONFeedInv[] jsonfeed = JsonConvert.DeserializeObject<JSONFeedInv[]>(text);
+                foreach (JSONFeedInv j in jsonfeed)
+                    m_feedid_inv[string.Format(m_URL[0] + m_URL[1], m_key, j.ID.ToString())] = j.Name;
+            }
         }
 
         
+        public static List<string> AddBothDirc(List<string> list)
+        {
+            HashSet<string> r = new HashSet<string>();
+            foreach (var item in list)
+            {
+                if (char.IsLetter(item[item.Length - 1]))
+                {
+                    r.Add(item.Substring(0, item.Length - 1) + "S");
+                    r.Add(item.Substring(0, item.Length - 1) + "N");
+                }
+                if (char.IsDigit(item[item.Length - 1]))
+                {
+                    r.Add(item + "S");
+                    r.Add(item + "N");
+                }
+            }
+            return r.ToList();
+        }
 
         public class TransferComplexInfo
         {
@@ -341,17 +409,35 @@ namespace MetroMate
             public string Name;
             public char[] ID;
         }
-        private Dictionary<char, FeedIDInfo> m_feedid;
+
+        private struct JSONColorFeed
+        {
+            public char[] Idef;
+            public string Name;
+            public string Color;
+        }
+
+        private struct JSONFeedInv
+        {
+            public char[] Idef;
+            public string Name;
+            public int ID;
+        }
+
         private static Dictionary<string, List<string>> ToDict(string Filename)
         {
             string path = NSBundle.MainBundle.PathForResource(Filename, "");
             string text = System.IO.File.ReadAllText(path);
             return JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(text);
         }
+
         private readonly string  m_key;
         private readonly List<string> m_URL;
         private readonly List<StationInfo> m_station;
         private readonly Dictionary<string, StationInfo> m_station_map;
+        private readonly Dictionary<char, UIColor> m_color_map;
+        private readonly Dictionary<char, FeedIDInfo> m_feedid;
+        private readonly Dictionary<string, string> m_feedid_inv;
 
         public List<char> Lines {get {
                 List<char> r = m_feedid.Keys.ToList();
@@ -360,6 +446,12 @@ namespace MetroMate
             } }
         public TransferComplexInfo TransferComplex;
         public List<StationInfo> GetStations() { return m_station; }
+        public UIColor GetLineColor(char c)
+        {
+            if (m_color_map.ContainsKey(c))
+                return m_color_map[c];
+            return UIColor.SystemBlueColor;
+        }
         public FeedIDInfo GetFeedIDInfo(string str)
         {
             if (m_feedid == null) return null;
@@ -387,6 +479,12 @@ namespace MetroMate
             else
                 return new StationInfo("", "", "");
         }
+        public string GetLineNameFromURL(string url)
+        {
+            if (m_feedid_inv.ContainsKey(url))
+                return m_feedid_inv[url];
+            return "UNKNOWN";
+        }
     }
 
     public class RouteInfo
@@ -406,11 +504,12 @@ namespace MetroMate
                 return null;
         }
 
-        public List<List<Tuple<int, string>>> GetRoutesCountUnique(string id)
+        public List<List<Tuple<int, string>>> GetRoutesCountUnique(string id, out Tuple<HashSet<string>,HashSet<string>> ht)
         {
+            ht = null;
             if (map.ContainsKey(id))
                 if (map[id] != null)
-                    return map[id].GetAllPathDataCountUnique();
+                    return map[id].GetAllPathDataCountUnique(out ht);
                 else
                     return new List<List<Tuple<int, string>>>();
             else
@@ -431,56 +530,111 @@ namespace MetroMate
         public RouteInfo(MTAInfo src, RTInfos rtinfo)
         {
             this.src = src;
-            this.rtinfo = rtinfo;
             map = new Dictionary<string, NTree<string>>();
-            Refresh();
+            this.rtinfo = rtinfo;
         }
 
         public void Refresh()
         {
+            map.Clear();
             List<string> a = new List<string>();
             a.Add((char)255 + "");
-            List<TripInfo> tripInfos = rtinfo.QueryByStation(a, 1);
-
-            foreach (char _LINE in src.Lines)
+            List<TripInfo> tripInfos = new List<TripInfo>();
+            try
             {
-                List<char> _DIRS = new List<char>();
-                _DIRS.Add('N'); _DIRS.Add('S');
-                foreach (char _DIR in _DIRS)
+                rtinfo.QueryByStation(a, out tripInfos, 1);
+            }
+            catch (FeedFetchException e)
+            {
+                throw e;
+            }
+            finally
+            {
+                foreach (char _LINE in src.Lines)
                 {
-                    string str_id = _LINE.ToString() + _DIR.ToString();
-                    map[str_id] = null;
-                    foreach (TripInfo i in tripInfos)
-                        if (i.Id.IndexOf('_') != -1 &&   // Find the line number
-                            i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
-                            i.Id.IndexOf("..") != -1 && // Find the direction
-                            i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
-                            i.StopTime.Length > 0)
-                            {
-                            NTree<string> t = null;
-                            for (int j = 0; j < i.StopTime.Length; j++) {
-                                if (string.Equals(src.GetStationInfo(i.StopTime[j].StopId).Name, ""))
-                                    continue;
-                                if(t == null)
-                                    t = new NTree<string>(i.StopTime[j].StopId);
-                                else
-                                    t.AddNode(i.StopTime[j].StopId, true);
-                            }
-                            if (map[str_id] == null)
-                                map[str_id] = t;
-                            else
-                                map[str_id].Combine(t);
-                        }
+                    List<char> _DIRS = new List<char>();
+                    _DIRS.Add('N'); _DIRS.Add('S');
+                    foreach (char _DIR in _DIRS)
+                    {
+                        string str_id = _LINE.ToString() + _DIR.ToString();
+                        map[str_id] = null;
+                        if (tripInfos != null)
+                            foreach (TripInfo i in tripInfos)
+                                if (i.Id.IndexOf('_') != -1 &&   // Find the line number
+                                    i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
+                                    i.Id.IndexOf("..") != -1 && // Find the direction
+                                    i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
+                                    i.StopTime.Length > 0)
+                                {
+                                    NTree<string> t = null;
+                                    for (int j = 0; j < i.StopTime.Length; j++)
+                                    {
+                                        if (string.Equals(src.GetStationInfo(i.StopTime[j].StopId).Name, ""))
+                                            continue;
+                                        if (t == null)
+                                            t = new NTree<string>(i.StopTime[j].StopId);
+                                        else
+                                            t.AddNode(i.StopTime[j].StopId, true);
+                                    }
+                                    if (map[str_id] == null)
+                                        map[str_id] = t;
+                                    else
+                                        map[str_id].Combine(t);
+                                }
+                    }
                 }
             }
         }
-    }
-/*
-    public class MTInfo
-    {
-        public MTInfo()
+        public void Refresh(RTInfos rtinfo)
         {
+            this.rtinfo = rtinfo;
+            Refresh();
         }
     }
-    */
+
+    public class FeedMessageException : Exception
+    {
+        public FeedMessageException() : base() { }
+        public FeedMessageException(Exception e) : base(e.Message, e.InnerException) { }
+    }
+
+    public class FeedFetchException : Exception
+    {
+        public FeedFetchException() : base()
+        {
+            LineStr = new List<string>();
+            ExceptionStr = new List<string>();
+        }
+
+        private List<string> LineStr;
+        private List<string> ExceptionStr;
+        public override string Message
+        {
+            get {
+                string s = "Invalid feed occur at:";
+                for (int i = 0; i < LineStr.Count; i++)
+                    s += ("\n" + LineStr[i] + "\t" + ExceptionStr[i]);
+                return s;
+            }
+        }
+        public void AddException(Exception e, string LineStr)
+        {
+            if (this.LineStr.Contains(LineStr))
+                return;
+            this.LineStr.Add(LineStr);
+            ExceptionStr.Add(e.Message);
+        }
+
+        public void ShowAlert(UIViewController v)
+        {
+            //Create Alert
+            var okAlertController = UIAlertController.Create("ERROR", Message , UIAlertControllerStyle.Alert);
+
+            //Add Action
+            okAlertController.AddAction(UIAlertAction.Create("OK", UIAlertActionStyle.Default, null));
+
+            // Present Alert
+            v.PresentViewController(okAlertController, true, null);
+        }
+    }
 }

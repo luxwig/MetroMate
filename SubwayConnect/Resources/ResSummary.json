@@ -3,5 +3,7 @@
     "FeedID": [ "X.json"],
     "Key": [ "b12af9a5fd7d6665a230010a00d63ca4" ],
     "Station":  ["stops.csv"],
-    "Transfer":  ["transfer.csv"]
+    "Transfer": [ "transfer.csv" ],
+    "Color": [ "color.json" ],
+    "FeedIDInd":  ["XP.json"]
 }

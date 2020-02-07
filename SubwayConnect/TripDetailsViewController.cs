@@ -30,24 +30,7 @@ namespace MetroMate
             Xab.Add(GetRefreshControl());
         }
 
-        private List<string> AddBothDirc(List<string> list)
-        {
-            HashSet<string> r = new HashSet<string>();
-            foreach (var item in list)
-            {
-                if (char.IsLetter(item[item.Length - 1]))
-                {
-                    r.Add(item.Substring(0, item.Length - 1) + "S");
-                    r.Add(item.Substring(0, item.Length - 1) + "N");
-                }
-                if (char.IsDigit(item[item.Length - 1]))
-                {
-                    r.Add(item + "S");
-                    r.Add(item + "N");
-                }
-            }
-            return r.ToList();
-        }
+        
         public override void PrepareForSegue(UIStoryboardSegue segue,
             NSObject sender)
         {
@@ -68,7 +51,14 @@ namespace MetroMate
                 stationList.AddRange(src.TransferComplex.GetTransferStations(TVS.tripinfo.StopTime[rowPath.Row].StopId));
                 arrivalDEtailViewController.SegDircValue = 
                     TVS.tripinfo.StopTime[rowPath.Row].StopId[TVS.tripinfo.StopTime[rowPath.Row].StopId.Length - 1] == 'N' ? 1 : 2;
-                arrivalDEtailViewController.TripInfos = rtinfo.QueryByStation(AddBothDirc(stationList));
+                try
+                {
+                    rtinfo.QueryByStation(MTAInfo.AddBothDirc(stationList), result: out arrivalDEtailViewController.TripInfos);
+                }
+                catch (FeedFetchException e)
+                {
+                    arrivalDEtailViewController.SagueE = e;
+                }
                 arrivalDEtailViewController.RefTime = RTInfos.StopLongTimeToDateTime(TVS.tripinfo.StopTime[rowPath.Row]);
             }
         }
@@ -80,7 +70,10 @@ namespace MetroMate
 
         protected override void UpdateDataItem()
         {
-            rtinfo.Refresh();
+            try
+            { rtinfo.Refresh(); }
+            catch (FeedFetchException e)
+            { e.ShowAlert(this); }
         }
     }
 }

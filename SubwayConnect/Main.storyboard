@@ -493,13 +493,11 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96513" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                             <rect key="frame" x="20" y="38" width="42" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                            <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96511" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
                                             <rect key="frame" x="20" y="11" width="273" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
-                                            <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="96515">
@@ -525,6 +523,7 @@
                                     <outlet property="bar_count" destination="96515" id="96514"/>
                                     <segue id="109762" destination="10682" kind="show" identifier="searchTrip"/>
                                 </connections>
+                                <color key="backgroundColor" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace" white="0" alpha="0"/>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -607,9 +606,9 @@
                                 </tableViewCellContentView>
                                 <connections>
                                     <outlet property="lbl_NB" destination="68437" id="name-outlet-68437"/>
-                                    <outlet property="lbl_NBcount" destination="68564" id="name-outlet-68564"/>
+                                    <outlet property="lbl_NBvia" destination="68564" id="name-outlet-68564"/>
                                     <outlet property="lbl_SB" destination="69105" id="name-outlet-69105"/>
-                                    <outlet property="lbl_SBcount" destination="69024" id="name-outlet-69024"/>
+                                    <outlet property="lbl_SBvia" destination="69024" id="name-outlet-69024"/>
                                     <outlet property="img_line" destination="68359" id="name-outlet-68359"/>
                                     <segue id="92896" destination="92682" kind="show" identifier="showLine"/>
                                 </connections>

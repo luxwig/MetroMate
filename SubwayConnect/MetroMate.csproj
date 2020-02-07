@@ -231,6 +231,8 @@
       <BundleResource Include="Resources\transfer.csv" />
       <BundleResource Include="Resources\logo\J.png" />
       <BundleResource Include="Resources\logo\Z.png" />
+      <BundleResource Include="Resources\color.json" />
+      <BundleResource Include="Resources\XP.json" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
