@@ -234,6 +234,9 @@
       <BundleResource Include="Resources\logo\Z.png" />
       <BundleResource Include="Resources\color.json" />
       <BundleResource Include="Resources\XP.json" />
+      <BundleResource Include="Resources\logo\H.png" />
+      <BundleResource Include="Resources\logo\9.png" />
+      <BundleResource Include="Resources\logo\S.png" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

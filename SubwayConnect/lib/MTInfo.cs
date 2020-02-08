@@ -105,7 +105,6 @@ namespace MetroMate
             else
                 est = stopTime[Index].Departure.Time;
         }
-
         protected long est;
 
         public int Count { get { return StopTime.Length; } }
@@ -141,7 +140,41 @@ namespace MetroMate
         }
     }
 
+    public class TripInfoDataSource
+    {
+        private readonly List<string> stations;
+        private readonly RTInfos RTInfosSrc;
 
+        public TripInfoDataSource(List<string> stations, RTInfos RTInfosSrc)
+        {
+            this.stations = stations;
+            this.RTInfosSrc = RTInfosSrc;
+        }
+
+
+        /// <summary>
+        /// Get trip infomation
+        /// </summary>
+        /// <param name="e">FeedFetchException if exsist</param>
+        /// <param name="refreshFlag">0 Auto, 1 Force Refresh, 2 Force not Refresh</param>
+        /// <returns></returns>
+        public List<TripInfo> GetData(out Exception e, int refreshFlag = 0)
+        {
+            List<TripInfo> result = null;
+            e = (FeedFetchException)RTInfosSrc.QueryByStation(stations, out result, refreshFlag);
+            return result;
+        }
+
+
+        /// <summary>
+        /// Refresh RTInfo
+        /// </summary>
+        /// <exception cref="FeedFetchException">It will be propogated from RTInfosSrc.Refresh()</exception>
+        public void Refresh()
+        {
+            RTInfosSrc.Refresh();
+        }
+    }
     /// <summary>
     /// Feed information - Store ID with the name in the JSON
     /// </summary>
@@ -179,9 +212,9 @@ namespace MetroMate
             public FeedMessageCashe(FeedMessage Feed, DateTime Timestamp) { this.Feed = Feed; this.Timestamp = Timestamp; }
         }
 
-        private MTAInfo src;
         private HashSet<string> lastQuery;
         private Dictionary<string, FeedMessageCashe> cacheFeed;
+        public  MTAInfo src;
 
         // Constructor
         public RTInfos(MTAInfo src)
@@ -293,14 +326,8 @@ namespace MetroMate
         /// Same as return value. Used when the exceptions are raised
         /// </param>
         /// <param name="refreshFlag">0 Auto, 1 Force Refresh, 2 Force not Refresh</param>
-        /// <returns>List of TripInfo conatins trip informations requested</returns>
-        /// <exception cref="FeedFetchException">
-        /// When one of the requests is failed,
-        /// the rest of the requests would still be processed.
-        /// After all requests are processed,
-        /// FeedFetchException is retrhown
-        /// </exception> 
-        public List<TripInfo> QueryByStation(List<string> stations,  out List<TripInfo> result, int refreshFlag = 0)
+        /// <returns>Exception if raised. Otherwise null</returns>
+        public Exception QueryByStation(List<string> stations,  out List<TripInfo> result, int refreshFlag = 0)
         {
             List<TripInfo> r = new List<TripInfo>();
             lastQuery = new HashSet<string>();
@@ -334,8 +361,7 @@ namespace MetroMate
             }
             r.Sort();
             result = r;
-            if (feedE != null) throw feedE;
-            return r;
+            return feedE;
         }
     }
 
@@ -602,50 +628,43 @@ namespace MetroMate
             List<string> a = new List<string>();
             a.Add((char)255 + "");
             List<TripInfo> tripInfos = new List<TripInfo>();
-            try
+            Exception e = rtinfo.QueryByStation(a, out tripInfos, 1);
+            foreach (char _LINE in src.Lines)
             {
-                rtinfo.QueryByStation(a, out tripInfos, 1);
-            }
-            catch (FeedFetchException e)
-            {
-                throw e;
-            }
-            finally
-            {
-                foreach (char _LINE in src.Lines)
+                List<char> _DIRS = new List<char>();
+                _DIRS.Add('N'); _DIRS.Add('S');
+                foreach (char _DIR in _DIRS)
                 {
-                    List<char> _DIRS = new List<char>();
-                    _DIRS.Add('N'); _DIRS.Add('S');
-                    foreach (char _DIR in _DIRS)
-                    {
-                        string str_id = _LINE.ToString() + _DIR.ToString();
-                        map[str_id] = null;
-                        if (tripInfos != null)
-                            foreach (TripInfo i in tripInfos)
-                                if (i.Id.IndexOf('_') != -1 &&   // Find the line number
-                                    i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
-                                    i.Id.IndexOf("..") != -1 && // Find the direction
-                                    i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
-                                    i.StopTime.Length > 0)
+                    string str_id = _LINE.ToString() + _DIR.ToString();
+                    map[str_id] = null;
+                    if (tripInfos != null)
+                        foreach (TripInfo i in tripInfos)
+                            if (i.Id.IndexOf('_') != -1 &&   // Find the line number
+                                i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
+                                i.Id.IndexOf("..") != -1 && // Find the direction
+                                i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
+                                i.StopTime.Length > 0)
+                            {
+                                NTree<string> t = null;
+                                for (int j = 0; j < i.StopTime.Length; j++)
                                 {
-                                    NTree<string> t = null;
-                                    for (int j = 0; j < i.StopTime.Length; j++)
-                                    {
-                                        if (string.Equals(src.GetStationInfo(i.StopTime[j].StopId).Name, ""))
-                                            continue;
-                                        if (t == null)
-                                            t = new NTree<string>(i.StopTime[j].StopId);
-                                        else
-                                            t.AddNode(i.StopTime[j].StopId, true);
-                                    }
-                                    if (map[str_id] == null)
-                                        map[str_id] = t;
+                                    if (string.Equals(src.GetStationInfo(i.StopTime[j].StopId).Name, ""))
+                                        continue;
+                                    if (t == null)
+                                        t = new NTree<string>(i.StopTime[j].StopId);
                                     else
-                                        map[str_id].Combine(t);
+                                        t.AddNode(i.StopTime[j].StopId, true);
                                 }
-                    }
+                                if (map[str_id] == null)
+                                    map[str_id] = t;
+                                else
+                                    map[str_id].Combine(t);
+                            }
                 }
             }
+
+            if (e != null)
+                throw (FeedFetchException)e;
         }
         public void Refresh(RTInfos rtinfo)
         {
