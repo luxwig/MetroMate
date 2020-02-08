@@ -80,17 +80,11 @@ namespace MetroMate
 
                 if (arrivalDEtailViewController != null)
                 {
-                    try
-                    {
-                        arrivalDEtailViewController.rtinfo = new RTInfos(src);
-                        arrivalDEtailViewController.src = src;
-                        arrivalDEtailViewController.rtinfo.QueryByStation(URL, result: out arrivalDEtailViewController.TripInfos);
-                        arrivalDEtailViewController.SegDircValue = (Bound + 1);
-                    }
-                    catch (FeedFetchException e)
-                    {
-                        arrivalDEtailViewController.SagueE = e;
-                    }
+                    arrivalDEtailViewController.rtinfo = new RTInfos(src);
+                    arrivalDEtailViewController.src = src;
+                    arrivalDEtailViewController.tripDS = new TripInfoDataSource(URL, arrivalDEtailViewController.rtinfo);
+                    arrivalDEtailViewController.segDircValue = (Bound + 1);
+
                 }
             }
 

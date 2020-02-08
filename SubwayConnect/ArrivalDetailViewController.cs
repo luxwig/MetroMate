@@ -8,30 +8,31 @@ namespace MetroMate
 {
     public partial class ArrivalDetailViewController : UIViewController
     {
-        public FeedFetchException SagueE = null;
+        public FeedFetchException sagueE = null;
         public List<TripInfo> TripInfos;
+        public TripInfoDataSource tripDS;
         public RTInfos rtinfo;
         public MTAInfo src;
         private ArrivalDetailTVS ATVS;
-        public int SegDircValue=0;
-        public DateTime RefTime;
+        public int segDircValue = 0;
+        public DateTime refTime;
         public void SetSegDirc(int value)
         {
             seg_dirc.SelectedSegment = value;
         }
         public ArrivalDetailViewController (IntPtr handle) : base (handle)
         {
-            RefTime = DateTime.MinValue;
+            refTime = DateTime.MinValue;
         }
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
-            if (SagueE != null)
-                SagueE.ShowAlert(this);
-            ATVS =  new ArrivalDetailTVS(TripInfos,src, this, RefTime);
+            if (sagueE != null)
+                sagueE.ShowAlert(this);
+            ATVS =  new ArrivalDetailTVS(tripDS, src, this, refTime);
             ArrTimeTable.Source = ATVS;
             ArrTimeTable.RowHeight = 110;
-            SetSegDirc(SegDircValue);
+            SetSegDirc(segDircValue);
             ATVS.filterDirection((int)seg_dirc.SelectedSegment);
 
             await RefreshAsync();
@@ -88,7 +89,8 @@ namespace MetroMate
         protected void RefreshAsyncFunc() { ArrTimeTable.ReloadData(); }
         protected void UpdateDataItem()
         {
-            try { rtinfo.Refresh(); } catch (FeedFetchException e) { e.ShowAlert(this); }
+            ATVS.Refresh();
+            ATVS.filterDirection((int)seg_dirc.SelectedSegment);
         } 
         protected UIRefreshControl GetRefreshControl() { return RefreshControl; }
 

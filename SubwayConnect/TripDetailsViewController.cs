@@ -49,17 +49,10 @@ namespace MetroMate
                 arrivalDEtailViewController.rtinfo = rtinfo;
                 List<string> stationList = new List<string>() { TVS.tripinfo.StopTime[rowPath.Row].StopId };
                 stationList.AddRange(src.TransferComplex.GetTransferStations(TVS.tripinfo.StopTime[rowPath.Row].StopId));
-                arrivalDEtailViewController.SegDircValue = 
+                arrivalDEtailViewController.segDircValue = 
                     TVS.tripinfo.StopTime[rowPath.Row].StopId[TVS.tripinfo.StopTime[rowPath.Row].StopId.Length - 1] == 'N' ? 1 : 2;
-                try
-                {
-                    rtinfo.QueryByStation(MTAInfo.AddBothDirc(stationList), result: out arrivalDEtailViewController.TripInfos);
-                }
-                catch (FeedFetchException e)
-                {
-                    arrivalDEtailViewController.SagueE = e;
-                }
-                arrivalDEtailViewController.RefTime = RTInfos.StopLongTimeToDateTime(TVS.tripinfo.StopTime[rowPath.Row]);
+                arrivalDEtailViewController.tripDS = new TripInfoDataSource(MTAInfo.AddBothDirc(stationList), rtinfo);
+                arrivalDEtailViewController.refTime = RTInfos.StopLongTimeToDateTime(TVS.tripinfo.StopTime[rowPath.Row]);
             }
         }
 

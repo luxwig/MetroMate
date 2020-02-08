@@ -42,19 +42,31 @@ namespace MetroMate
 
 
     class ArrivalDetailTVS : UITableViewSource
-    { 
+    {
+        public TripInfoDataSource tiDS;
         public List<TripInfo> tripInfos;
         public List<TripInfo> filteredInfos;
         public MTAInfo src;
         public ArrivalDetailViewController owner;
         public DateTime RefTime;
-        public ArrivalDetailTVS(List<TripInfo> tripInfos, MTAInfo src, ArrivalDetailViewController owner, DateTime RefTime)
+        public ArrivalDetailTVS(TripInfoDataSource tiDS, MTAInfo src, ArrivalDetailViewController owner, DateTime RefTime)
         {
-            this.tripInfos = tripInfos;
+            Exception e = null;
+            this.tiDS = tiDS;
+            tripInfos = tiDS.GetData(out e);
             filteredInfos = tripInfos;
             this.src = src;
             this.owner = owner;
             this.RefTime = RefTime;
+            if (e != null)
+                ((FeedFetchException)e).ShowAlert(owner);
+        }
+        public void Refresh()
+        {
+            Exception e = null;
+            tripInfos = tiDS.GetData(out e, 1);
+            if (e != null)
+                ((FeedFetchException)e).ShowAlert(owner);
         }
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
