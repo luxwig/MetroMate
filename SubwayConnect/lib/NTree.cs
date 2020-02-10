@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace MetroMate
 {
+    public class ExceptionTreeNodeDuplication : Exception
+    {
+        public ExceptionTreeNodeDuplication(string ErrNode) :
+            base("Found node data duplication - " + ErrNode)
+        { }
+    }
     public class NTreeNode<T>
     {
         public T data;
@@ -93,7 +99,7 @@ namespace MetroMate
         public NTreeNode<T> AddHead(T data, bool move = false)
         {
             if (Nodes.ContainsKey(data))
-                throw new System.Exception("Element is already exist.");
+                throw new ExceptionTreeNodeDuplication(data.ToString());
 
             NTreeNode<T> newNode = new NTreeNode<T>(data, new HashSet<NTreeNode<T>>());
             Head.Add(newNode);
@@ -104,7 +110,7 @@ namespace MetroMate
         public NTreeNode<T> AddHead(NTreeNode<T> n, bool move = false)
         {
             if (Nodes.ContainsKey(n.data))
-                throw new System.Exception("Element is already exist.");
+                throw new ExceptionTreeNodeDuplication(n.data.ToString());
 
             NTreeNode<T> newNode = new NTreeNode<T>(n.data, new HashSet<NTreeNode<T>>(), n.child);
             Head.Add(newNode);
@@ -118,7 +124,7 @@ namespace MetroMate
         public NTreeNode<T> AddNode(T child, bool move = false)
         {
             if (Nodes.ContainsKey(child))
-                throw new System.Exception("Element is already exist.");
+                throw new ExceptionTreeNodeDuplication(child.ToString());
 
             NTreeNode<T> newNode = new NTreeNode<T>(child, Current);
             
@@ -132,7 +138,7 @@ namespace MetroMate
             NTreeNode<T> newNode;
             if (Nodes.ContainsKey(child.data))
                 if (!ReferenceEquals(Nodes[child.data], child))
-                    throw new System.Exception("Element is already exist.");
+                    throw new ExceptionTreeNodeDuplication(child.data.ToString());
                 else
                 {
                     if (!Current.child.Contains(child))

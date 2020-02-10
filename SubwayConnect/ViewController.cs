@@ -56,7 +56,6 @@ namespace MetroMate
                 }
                 ArrTimeTable.ReloadData();
             }
-            Console.WriteLine("We've unwinded to Yellow!");
         }
 
 

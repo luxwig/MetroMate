@@ -67,7 +67,8 @@ namespace MetroMate
                 var TVS = (ArrivalDetailTVS)ArrTimeTable.Source;
                 var rowPath = ArrTimeTable.IndexPathForSelectedRow;
                 tripDetailViewController.Title = TVS.filteredInfos[rowPath.Row].Id;
-                tripDetailViewController.tripinfo = TVS.filteredInfos[rowPath.Row];
+                tripDetailViewController.stiDS = new SingleTripInfoDataSource(tripDS,
+                                                        TVS.filteredInfos[rowPath.Row].Id);
                 tripDetailViewController.src = src;
                 tripDetailViewController.rtinfo = rtinfo;
                 

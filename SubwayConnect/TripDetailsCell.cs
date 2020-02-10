@@ -30,8 +30,10 @@ namespace MetroMate
             {
                 txt_time.TextColor = UIColor.FromRGB(142, 142, 147);
                 txt_stop.TextColor = UIColor.FromRGB(99, 99, 102);
+#if DEBUG
                 Console.WriteLine(dtf.ToLongTimeString());
                 Console.WriteLine(DateTime.Now.ToLongTimeString());
+#endif
             }
             else
             {
@@ -44,22 +46,22 @@ namespace MetroMate
 
     class TripTVS : UITableViewSource
     {
-        public TripInfo tripinfo;
         public MTAInfo src;
-        public TripTVS(TripInfo tripinfo, MTAInfo src)
+        SingleTripInfoDataSource stiDS;
+
+        public TripTVS(SingleTripInfoDataSource stiDS, MTAInfo src)
         {
-            this.tripinfo = tripinfo;
+            this.stiDS = stiDS;
             this.src = src;
         }
-
         public override nint RowsInSection(UITableView tableview, nint section)
         {
-            return tripinfo.Count;
+            return stiDS.Trip.Count;
         }
         public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
         {
             TripDetailsCell cell = (TripDetailsCell)tableView.DequeueReusableCell("cell_trip", indexPath);
-            cell.UpdateCell(tripinfo, src, indexPath.Row);
+            cell.UpdateCell(stiDS.Trip, src, indexPath.Row);
             return cell;
         }
     }

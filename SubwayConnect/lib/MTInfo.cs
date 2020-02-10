@@ -140,6 +140,60 @@ namespace MetroMate
         }
     }
 
+    public class SingleTripInfoDataSource
+    {
+        private TripInfoDataSource tiDS;
+        private TripInfo trip;
+        private readonly string uid;
+        private TripInfo TripHelper(out Exception e)
+        {
+            var ts = tiDS.GetData(out e);
+            foreach (var t in ts)
+                if (t.Id == uid)
+                    return t;
+            return null;
+        }
+
+        public TripInfo Trip { get { return trip; } }
+        public SingleTripInfoDataSource(TripInfoDataSource tiDS, string uid)
+        {
+            this.uid = uid;
+            this.tiDS = tiDS;
+            Exception e = null;
+            trip = TripHelper(out e);
+            if (trip == null)
+                throw new Exception("Trip does not exsit");
+            if (e != null)
+                throw (FeedFetchException)e;
+        }
+
+        public void Refresh()
+        {
+            Exception e = null;
+            TripInfo temp = TripHelper(out e);
+            if (temp == null)
+                return;
+            int i = 0;
+            for (i = 0; i < trip.StopTime.Length; i++)
+                if (trip.StopTime[i].StopId == temp.StopTime[0].StopId)
+                    break;
+            
+            foreach (var stop in temp.StopTime)
+            {
+                if (i >= trip.StopTime.Length) {
+#if DEBUG
+                    Console.WriteLine("Stop cannot be match {0}", stop.StopId);
+#endif
+                    return;
+                }
+                    if (stop.StopId == trip.StopTime[i].StopId)
+                    trip.StopTime[i] = stop;
+                else
+                    i++;
+            }
+        }
+          
+    }
     public class TripInfoDataSource
     {
         private readonly List<string> stations;
@@ -645,6 +699,7 @@ namespace MetroMate
                                 i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
                                 i.StopTime.Length > 0)
                             {
+                                bool exceptionFalg = false;
                                 NTree<string> t = null;
                                 for (int j = 0; j < i.StopTime.Length; j++)
                                 {
@@ -653,8 +708,22 @@ namespace MetroMate
                                     if (t == null)
                                         t = new NTree<string>(i.StopTime[j].StopId);
                                     else
-                                        t.AddNode(i.StopTime[j].StopId, true);
+                                    {
+                                        try
+                                        {
+                                            t.AddNode(i.StopTime[j].StopId, true);
+                                        }
+                                        catch (ExceptionTreeNodeDuplication eTree)
+                                        {
+#if DEBUG
+                                            Console.WriteLine(eTree.Message);
+#endif
+                                            exceptionFalg = true;
+                                            break;
+                                        }
+                                    }
                                 }
+                                if (exceptionFalg) continue;
                                 if (map[str_id] == null)
                                     map[str_id] = t;
                                 else

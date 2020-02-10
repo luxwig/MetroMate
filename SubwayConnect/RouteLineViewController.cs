@@ -23,7 +23,9 @@ namespace MetroMate
                         ht[key] = tmp.Item2.ToList();
                     else
                         ht[key] = null;
+#if DEBUG
                     Console.WriteLine(key);
+#endif
                 }
             }
         }

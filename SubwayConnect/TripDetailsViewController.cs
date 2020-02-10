@@ -9,7 +9,7 @@ namespace MetroMate
 {
     public partial class TripDetailsViewController : UITableViewRefreshController
     {
-        public TripInfo tripinfo;
+        public SingleTripInfoDataSource stiDS;
         public MTAInfo src;
         public RTInfos rtinfo;
 
@@ -20,11 +20,13 @@ namespace MetroMate
         public override async void ViewDidLoad()
         {
             base.ViewDidLoad();
-            Xab.Source = new TripTVS(tripinfo, src);
-            foreach (var id in tripinfo.StopTime)
+            Xab.Source = new TripTVS(stiDS, src);
+#if DEBUG
+            foreach (var id in stiDS.Trip.StopTime)
             {
                 Console.WriteLine(id.StopId);
             }
+#endif
             Xab.RowHeight = 70;
             // Perform any additional setup after loading the view, typically from a nib.
             Xab.Add(GetRefreshControl());
@@ -41,18 +43,18 @@ namespace MetroMate
 
 
             if (arrivalDEtailViewController != null)
-            {
-                var TVS = (TripTVS)Xab.Source;
+            { 
+                var tripinfo = stiDS.Trip;
                 var rowPath = Xab.IndexPathForSelectedRow;
-                arrivalDEtailViewController.Title = src.GetStationInfo(TVS.tripinfo.StopTime[rowPath.Row].StopId).Name;
+                arrivalDEtailViewController.Title = src.GetStationInfo(tripinfo.StopTime[rowPath.Row].StopId).Name;
                 arrivalDEtailViewController.src = src;
                 arrivalDEtailViewController.rtinfo = rtinfo;
-                List<string> stationList = new List<string>() { TVS.tripinfo.StopTime[rowPath.Row].StopId };
-                stationList.AddRange(src.TransferComplex.GetTransferStations(TVS.tripinfo.StopTime[rowPath.Row].StopId));
-                arrivalDEtailViewController.segDircValue = 
-                    TVS.tripinfo.StopTime[rowPath.Row].StopId[TVS.tripinfo.StopTime[rowPath.Row].StopId.Length - 1] == 'N' ? 1 : 2;
+                List<string> stationList = new List<string>() { tripinfo.StopTime[rowPath.Row].StopId };
+                stationList.AddRange(src.TransferComplex.GetTransferStations(tripinfo.StopTime[rowPath.Row].StopId));
+                arrivalDEtailViewController.segDircValue =
+                    tripinfo.StopTime[rowPath.Row].StopId[tripinfo.StopTime[rowPath.Row].StopId.Length - 1] == 'N' ? 1 : 2;
                 arrivalDEtailViewController.tripDS = new TripInfoDataSource(MTAInfo.AddBothDirc(stationList), rtinfo);
-                arrivalDEtailViewController.refTime = RTInfos.StopLongTimeToDateTime(TVS.tripinfo.StopTime[rowPath.Row]);
+                arrivalDEtailViewController.refTime = RTInfos.StopLongTimeToDateTime(tripinfo.StopTime[rowPath.Row]);
             }
         }
 
@@ -64,7 +66,7 @@ namespace MetroMate
         protected override void UpdateDataItem()
         {
             try
-            { rtinfo.Refresh(); }
+            { stiDS.Refresh(); }
             catch (FeedFetchException e)
             { e.ShowAlert(this); }
         }

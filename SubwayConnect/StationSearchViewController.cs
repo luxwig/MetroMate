@@ -77,7 +77,6 @@ namespace MetroMate
         public override void PrepareForSegue(UIStoryboardSegue segue,
             NSObject sender)
         {
-            Console.WriteLine("Unwind");
 
         }
 

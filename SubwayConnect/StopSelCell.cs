@@ -92,7 +92,9 @@ namespace MetroMate
                     tableView.DeleteRows(new NSIndexPath[] { indexPath }, UITableViewRowAnimation.Fade);
                     break;
                 case UITableViewCellEditingStyle.None:
+#if DEBUG
                     Console.WriteLine("CommitEditingStyle:None called");
+#endif
                     break;
             }
         }

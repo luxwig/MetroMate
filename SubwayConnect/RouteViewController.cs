@@ -69,7 +69,9 @@ namespace MetroMate
             URL.Add(stopID);
             URL.AddRange(src.TransferComplex.GetTransferStations(stopID));
             URL = MTAInfo.AddBothDirc(URL);
+#if DEBUG
             Console.WriteLine(((RouteStopTVS)tabLinex.Source).Routes[rowPath].Item2);
+#endif
 
 
 
