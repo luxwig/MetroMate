@@ -9,7 +9,7 @@ namespace MetroMate
 
     enum StationType
     {
-        TerminalA, TransferA, TransferB, Local, Express, TerminalX
+        TerminalA, TerminalAX, TransferA, TransferB, TransferX, Local, Express, TerminalB, TerminalBX
     }
     public partial class RouteStopViewCell : UITableViewCell
     {
@@ -72,7 +72,10 @@ namespace MetroMate
                 case StationType.TransferB:
                     imgViewer.Image = UIImage.FromBundle(path + "transfer.png");
                     break;
-                case StationType.TerminalX:
+                case StationType.TransferX:
+                    imgViewer.Image = UIImage.FromBundle(path + "transferX.png");
+                    break;
+                case StationType.TerminalB:
                     imgViewer.Image =
                         new UIImage(UIImage.FromBundle(path + "terminal.png").CGImage,
                         1, UIImageOrientation.DownMirrored);
@@ -101,6 +104,21 @@ namespace MetroMate
         private List<int> stationCount;
         public List<string> stationName;
         private List<StationType> stationType;
+
+        public List<StationType> Promote(List<StationType> stations)
+        {
+            if (stations[stations.Count - 1] == StationType.Local)
+            {
+                stations[stations.Count - 1] = StationType.TransferA;
+            }
+            else
+            {
+                if (stations[stations.Count - 1] == StationType.TransferB)
+                { stations[stations.Count - 1] = StationType.TransferX; }
+            }
+            stations.Add(StationType.TransferB);
+            return stations;
+        }
         public RouteStopTVS(MTAInfo src, List<Tuple<int, string>> Routes, int MaxValue)
         {
             this.src = src;
@@ -120,13 +138,12 @@ namespace MetroMate
                     stationType.Add(StationType.Local);
                 else
                 {
-                    stationType[i - 1] = StationType.TransferA;
-                    stationType.Add(StationType.TransferB);
+                    stationType = Promote(stationType);
                 }
                 stationName.Add(r.Item2);
                 stationCount.Add(r.Item1);
             }
-            stationType[i - 1] = StationType.TerminalX;
+            stationType[i - 1] = StationType.TerminalB;
         }
 
         public override nint RowsInSection(UITableView tableview, nint section)

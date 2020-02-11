@@ -676,45 +676,6 @@ namespace MetroMate
             return Tuple.Create("", UIColor.White);
         }
     }
-    class RouteStationInfo
-    {
-        public int Count { get { return stationName.Count; } }
-        public List<int> StationCount { get { return stationCount; } }
-        public List<string> StationName { get { return StationName; } }
-        public List<StationType> SType { get { return stationType; } }
-        private  List<int> stationCount;
-        private  List<string> stationName;
-        private  List<StationType> stationType;
-
-        public Tuple<int, string, StationType> this[int i]
-        {
-            get { return Tuple.Create(stationCount[i], StationName[i], stationType[i]); }
-        }
-
-        public RouteStationInfo(List<Tuple<int, string>> Routes, MTAInfo src)
-        {
-            stationCount = new List<int>();
-            stationName = new List<string>();
-            stationType = new List<StationType>();
-            foreach (var r in Routes)
-            {
-                if (Count == 0)
-                    stationType.Add(StationType.TerminalA);
-                else
-                    if (string.Equals(src.GetServLine(stationName[Count - 1]),
-                                     src.GetServLine(r.Item2)))
-                    stationType.Add(StationType.Local);
-                else
-                {
-                    stationType[Count - 1] = StationType.TransferA;
-                    stationType.Add(StationType.TransferB);
-                }
-                stationName.Add(r.Item2);
-                stationCount.Add(r.Item1);
-            }
-            stationType[Count - 1] = StationType.TerminalX;
-        }
-    }
 
     public class RouteInfo
     {

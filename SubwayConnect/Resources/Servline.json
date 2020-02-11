@@ -3,9 +3,15 @@
     "Line": [ "1", "2", "3" ],
     "Ext": [ "" ]
   },
-  "WhitePlains": {
+  "WhitePlains_1": {
     "Line": [ "2", "5" ],
-    "Ext": [ "2345" ]
+    "Ext": [ "2345" ],
+    "_comment": [ "First section of White Plains, served by 2 and 5" ]
+  },
+  "WhitePlains_2": {
+    "Line": [ "2", "5" ],
+    "Ext": [ "" ],
+    "_comment": [ "Second section of White Plains, marked as 2 line since 5 does not have regular service" ]
   },
   "Nostrand": {
     "Line": [ "2", "5" ],
@@ -17,7 +23,8 @@
   },
   "NewLots": {
     "Line": [ "3", "4" ],
-    "Ext": [ "2345" ]
+    "Ext": [ "" ],
+    "_comment": [ "Is marked as 3 line since 4 only serves at night" ]
   },
   "Lenox": {
     "Line": [ "2", "3" ],
@@ -46,5 +53,174 @@
   "42nd": {
     "Line": [ "9" ],
     "Ext": [ "" ]
+  },
+
+
+  "8Av_1": {
+    "Line": [ "A", "C" ],
+    "Ext": [ "" ]
+  },
+  "8Av_2": {
+    "Line": [ "A", "C", "B", "D" ],
+    "Ext": [ "ACBD" ]
+  },
+  "8Av_3": {
+    "Line": [ "A", "C", "E" ],
+    "Ext": [ "" ]
+  },
+  "Fulton": {
+    "Line": [ "A", "C" ],
+    "Ext": [ "" ]
+  },
+  "Rockaway_1": {
+    "Line": [ "A" ],
+    "Ext": [ "" ],
+    "_comment": [ "Board Channel is served by both A and S" ]
+  },
+  "Rockaway_2": {
+    "Line": [ "A", "H" ],
+    "Ext": [ "AS" ]
+  },
+  "Rockaway_3": {
+    "Line": [ "H" ],
+    "Ext": [ "" ],
+    "_comment": [ "Board Channel is rely sttaion for S" ]
+  },
+
+  "Concourse": {
+    "Line": [ "B", "D" ],
+    "Ext": [ "" ]
+  },
+  "6Av_S": {
+    "Line": [ "E", "F" ],
+    "Ext": [ "ACBD" ],
+    "_comment": [ "Special Stop for cross town E on 6Av" ]
+  },
+  "6Av": {
+    "Line": [ "B", "D", "F", "M" ],
+    "Ext": [ "" ]
+  },
+  "Brighton_1": {
+    "Line": [ "B", "Q" ],
+    "Ext": [ "BQ" ]
+  },
+  "Brighton_2": {
+    "Line": [ "Q" ],
+    "Ext": [ "" ]
+  },
+  "Brighton_3": {
+    "Line": [ "D", "Q", "N" ],
+    "Ext": [ "BQ" ]
+  },
+  "4Av_1": {
+    "Line": [ "D", "N", "R" ],
+    "Ext": [ "BQ" ]
+  },
+  "4Av_2": {
+    "Line": [ "R" ],
+    "Ext": [ "" ]
+  },
+  "WestEnd": {
+    "Line": [ "D" ],
+    "Ext": [ "" ]
+  },
+  "Archer_1": {
+    "Line": [ "E", "J", "Z" ],
+    "Ext": [ "EJZ" ]
+  },
+  "Archer_2": {
+    "Line": [ "E" ],
+    "Ext": [ "" ]
+  },
+  "Queens_1": {
+    "Line": [ "E", "F" ],
+    "Ext": [ "ACBD" ]
+  },
+  "Queens_3": {
+    "Line": [ "E", "F" ],
+    "Ext": [ "ACBD" ]
+  },
+  "Queens_2": {
+    "Line": [ "E", "F", "M", "R" ],
+    "Ext": [ "EFR" ]
+  },
+  "Fulton_Culver": {
+    "Line": [ "A", "F" ],
+    "Ext": [ "ACBD" ]
+  },
+  "Fulton_Crosstown": {
+    "Line": [ "A", "G" ],
+    "Ext": [ "AG" ]
+  },
+  "Canarsie": {
+    "Line": [ "L" ],
+    "Ext": [""]
+  },
+  "63st_1": {
+    "Line": [ "F" ],
+    "Ext": [""]
+  },
+  "63st_2": {
+    "Line": [ "F", "Q" ],
+    "Ext": [ "BQ" ]
+  },
+  "Culver_1": {
+    "Line": [ "F", "G" ],
+    "Ext": [ "FG" ]
+  },
+  "Culver_2": {
+    "Line": [ "F" ],
+    "Ext": [""]
+  },
+  "Crosstown": {
+    "Line": [ "G" ],
+    "Ext": [""]
+  },
+
+  "Jamaica_1": {
+    "Line": [ "J", "Z" ],
+    "Ext": [""]
+  },
+
+  "Jamaica_2": {
+    "Line": [ "J", "Z", "M" ],
+    "Ext": [ "JZM" ]
+  },
+
+  "Nassau_1": {
+    "Line": [ "J", "Z", "M" ],
+    "Ext": [ "JZM" ]
+  },
+
+  "Nassau_2": {
+    "Line": [ "J", "Z" ],
+    "Ext": [""]
+  },
+
+  "2nd": {
+    "Line": [ "Q" ],
+    "Ext": [""]
+  },
+
+  "Myrtle": {
+    "Line": [ "M" ],
+    "Ext": [""]
+  },
+  "Astoria": {
+    "Line": [ "N", "W" ],
+    "Ext": [""]
+  },
+  "Broadway": {
+    "Line": [ "N", "W", "Q" ],
+    "Ext": [""]
+  },
+  "SeaBeach": {
+    "Line": [ "N" ],
+    "Ext": [""]
+  },
+  "Franklin": {
+    "Line": [ "S" ],
+    "Ext": [""]
   }
+
 }
