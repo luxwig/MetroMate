@@ -491,7 +491,7 @@ namespace MetroMate
         private readonly Dictionary<string, string> m_feedid_inv;
         private readonly Dictionary<string, Dictionary<string, List<string>>>
                                                     m_servline;
-
+        private readonly Dictionary<string, string> m_code;
         // Constructor 
         public MTAInfo(string filename) : this(ToDict(filename)) { }
         public MTAInfo(Dictionary<string, List<string>> dict)
@@ -562,8 +562,29 @@ namespace MetroMate
                 string text = System.IO.File.ReadAllText(path);
                 m_servline = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, List<string>>>>(text);
             }
+
+            if (dict.ContainsKey("SpecialCode"))
+            {
+                string path = NSBundle.MainBundle.PathForResource(dict["SpecialCode"][0], "");
+                string text = System.IO.File.ReadAllText(path);
+                m_code = JsonConvert.DeserializeObject<Dictionary<string, string>>(text);
+                /*
+                var k = m_code.Keys.ToList();
+                foreach (var i in k)
+                    m_code[m_code[i]] = i;
+                    */
+            }
         }
 
+        public string GetLineCode(string tripid)
+        {
+            int index1 = tripid.IndexOf("_"),
+                index2 = tripid.IndexOf(".");
+            if (index1 == -1 || index2 == -1 || index1 + 1 >= index2) return "";
+            string code = tripid.Substring(index1 + 1, index2 - (index1 + 1));
+            if (m_code.ContainsKey(code)) return m_code[code];
+            return code;
+        }
 
         private static Dictionary<string, List<string>> ToDict(string Filename)
         {
@@ -759,8 +780,7 @@ namespace MetroMate
                     map[str_id] = null;
                     if (tripInfos != null)
                         foreach (TripInfo i in tripInfos)
-                            if (i.Id.IndexOf('_') != -1 &&   // Find the line number
-                                i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
+                            if (string.Equals(src.GetLineCode(i.Id),_LINE.ToString()) &&
                                 i.Id.LastIndexOf(".") != -1 && // Find the direction
                                 i.Id[i.Id.LastIndexOf(".") + 1] == _DIR &&
                                 i.StopTime.Length > 0)

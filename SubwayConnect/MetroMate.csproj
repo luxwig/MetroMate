@@ -246,6 +246,7 @@
       <BundleResource Include="Resources\lineindicator\2345\express.png" />
       <BundleResource Include="Resources\lineindicator\2345\transfer.png" />
       <BundleResource Include="Resources\lineindicator\2345\local.png" />
+      <BundleResource Include="Resources\Scode.json" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

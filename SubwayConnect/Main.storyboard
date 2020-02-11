@@ -490,8 +490,14 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="55"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96513" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
-                                            <rect key="frame" x="20" y="38" width="42" height="21"/>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="111224" translatesAutoresizingMaskIntoConstraints="NO">
+                                            <rect key="frame" x="0.0" y="0.0" width="55" height="55"/>
+                                            <constraints>
+                                                <constraint id="115990" firstAttribute="width" secondItem="111224" secondAttribute="height" multiplier="1:1"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96513" translatesAutoresizingMaskIntoConstraints="NO">
+                                            <rect key="frame" x="60" y="35.5" width="31" height="14.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -502,29 +508,24 @@
                                                 <constraint id="96518" firstAttribute="height" constant="5"/>
                                             </constraints>
                                         </progressView>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="111224" translatesAutoresizingMaskIntoConstraints="NO">
-                                            <rect key="frame" x="284" y="0.0" width="55" height="55"/>
-                                            <constraints>
-                                                <constraint id="115990" firstAttribute="width" secondItem="111224" secondAttribute="height" multiplier="1:1"/>
-                                            </constraints>
-                                        </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96511" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
-                                            <rect key="frame" x="20" y="11" width="319" height="21"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96511" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES" numberOfLines="2">
+                                            <rect key="frame" x="60" y="5" width="279" height="32"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint id="96519" firstItem="96511" firstAttribute="leading" secondItem="96516" secondAttribute="leading" constant="20"/>
                                         <constraint id="96520" firstItem="96511" firstAttribute="top" secondItem="96516" secondAttribute="top" constant="5"/>
-                                        <constraint id="96521" firstItem="96513" firstAttribute="leading" secondItem="96516" secondAttribute="leading" constant="20"/>
                                         <constraint id="96522" firstAttribute="bottom" secondItem="96513" secondAttribute="bottom" constant="5"/>
                                         <constraint id="96523" firstAttribute="trailing" secondItem="96515" secondAttribute="trailing" constant="10"/>
                                         <constraint id="96524" firstItem="96515" firstAttribute="centerY" secondItem="96516" secondAttribute="centerY"/>
-                                        <constraint id="115633" firstItem="96515" firstAttribute="leading" secondItem="111224" secondAttribute="trailing" constant="5"/>
                                         <constraint id="115672" firstAttribute="top" secondItem="111224" secondAttribute="top"/>
                                         <constraint id="115673" firstAttribute="top" secondItem="111224" secondAttribute="top"/>
                                         <constraint id="115834" firstAttribute="bottom" secondItem="111224" secondAttribute="bottom"/>
+                                        <constraint id="116459" firstItem="111224" firstAttribute="leading" secondItem="96516" secondAttribute="leading"/>
+                                        <constraint id="116462" firstItem="96511" firstAttribute="leading" secondItem="111224" secondAttribute="trailing" constant="5"/>
+                                        <constraint id="116463" firstItem="96515" firstAttribute="leading" secondItem="96511" secondAttribute="trailing" constant="5"/>
+                                        <constraint id="116464" firstItem="96513" firstAttribute="leading" secondItem="111224" secondAttribute="trailing" constant="5"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>

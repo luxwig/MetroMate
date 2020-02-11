@@ -25,10 +25,9 @@ namespace MetroMate
                 txt_CC.Text = (DateTime.Now - tripInfo.GetTargetTime).ToString("h'h'");
             txt_CC.Text += (DateTime.Now - tripInfo.GetTargetTime).ToString("mm'm'ss's\n'");
             txt_CC.Text += tripInfo.GetTargetTime.ToString("HH:mm:ss");
-            int index = tripInfo.Id.IndexOf('_');
-            if (index != -1)
+            if (src.GetLineCode(tripInfo.Id).Length > 0)
             {
-                img_Logo.Image = UIImage.FromBundle("logo/"+ tripInfo.Id[index + 1].ToString() +".png");
+                img_Logo.Image = UIImage.FromBundle("logo/"+ src.GetLineCode(tripInfo.Id) +".png");
             }
 
             if (DateTime.Now > tripInfo.GetTargetTime)

@@ -6,5 +6,6 @@
     "Transfer": [ "transfer.csv" ],
     "Color": [ "color.json" ],
     "FeedIDInd": [ "XP.json" ],
-    "ServLine" : ["Servline.json"]
+    "ServLine": [ "Servline.json" ],
+    "SpecialCode" :  ["Scode.json"]
 }
