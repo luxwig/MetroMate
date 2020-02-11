@@ -47,6 +47,7 @@ namespace MetroMate
             base.ViewDidLoad();            
             tabLinex.Source = new RouteStopTVS(src, ListStop, MAXVALUE);
             tabLinex.RowHeight = 55;
+            /*
             View.BackgroundColor = src.GetLineColor(Line);
             var blur = UIBlurEffect.FromStyle(UIBlurEffectStyle.Prominent);
             var blurView = new UIVisualEffectView(blur);
@@ -54,6 +55,7 @@ namespace MetroMate
             //    UIBlurEffect.FromStyle(UIBlurEffectStyle.Dark));
             //var vibrancyView = new UIVisualEffectView(vibrancyEffect);
             ((UITableView)View).BackgroundView = blurView;
+            */
         }
 
 
@@ -64,13 +66,13 @@ namespace MetroMate
 
             List<string> URL = new List<string>();
             var rowPath = tabLinex.IndexPathForSelectedRow.Row;
-            string stopID = ((RouteStopTVS)tabLinex.Source).Routes[rowPath].Item2;
+            string stopID = ((RouteStopTVS)tabLinex.Source).stationName[rowPath];
             stopID = stopID.Substring(0, stopID.Length - 1);
             URL.Add(stopID);
             URL.AddRange(src.TransferComplex.GetTransferStations(stopID));
             URL = MTAInfo.AddBothDirc(URL);
 #if DEBUG
-            Console.WriteLine(((RouteStopTVS)tabLinex.Source).Routes[rowPath].Item2);
+            Console.WriteLine(((RouteStopTVS)tabLinex.Source).stationName[rowPath]);
 #endif
 
 

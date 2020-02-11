@@ -237,6 +237,15 @@
       <BundleResource Include="Resources\logo\H.png" />
       <BundleResource Include="Resources\logo\9.png" />
       <BundleResource Include="Resources\logo\S.png" />
+      <BundleResource Include="Resources\lineindicator\terminal.png" />
+      <BundleResource Include="Resources\lineindicator\express.png" />
+      <BundleResource Include="Resources\lineindicator\transfer.png" />
+      <BundleResource Include="Resources\lineindicator\local.png" />
+      <BundleResource Include="Resources\Servline.json" />
+      <BundleResource Include="Resources\lineindicator\2345\terminal.png" />
+      <BundleResource Include="Resources\lineindicator\2345\express.png" />
+      <BundleResource Include="Resources\lineindicator\2345\transfer.png" />
+      <BundleResource Include="Resources\lineindicator\2345\local.png" />
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

@@ -20,6 +20,10 @@ namespace MetroMate
 
         [Outlet]
         [GeneratedCode ("iOS Designer", "1.0")]
+        UIKit.UIImageView imgViewer { get; set; }
+
+        [Outlet]
+        [GeneratedCode ("iOS Designer", "1.0")]
         UIKit.UILabel lbl_stopid { get; set; }
 
         [Outlet]
@@ -31,6 +35,11 @@ namespace MetroMate
             if (bar_count != null) {
                 bar_count.Dispose ();
                 bar_count = null;
+            }
+
+            if (imgViewer != null) {
+                imgViewer.Dispose ();
+                imgViewer = null;
             }
 
             if (lbl_stopid != null) {

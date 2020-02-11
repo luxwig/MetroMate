@@ -85,9 +85,9 @@ namespace MetroMate
         }
         private char GetDirectionFromId(string str)
         {
-            int index = str.IndexOf("..");
+            int index = str.LastIndexOf(".");
             if (index != -1)
-                return str[index + 2];
+                return str[index + 1];
             return ' ';
         }
         public void filterDirection(int dirc)

@@ -24,26 +24,7 @@ namespace MetroMate
                 for (int i = 1; i < ht[line + "N"].Count; i++)
                     lbl_NBvia.Text += src.GetStationInfo(ht[line + "N"][i]).Name +
                                 ((i == ht[line + "N"].Count - 1) ? "" : "/");
-                //lbl_NB.Text = src.GetStationInfo(LineInfo[line + "N"][0][LineInfo[line + "N"][0].Count - 1].Item2).Name;
-                //lbl_NBvia.Text = "From "+ src.GetStationInfo(LineInfo[line + "N"][0][0].Item2).Name;
-                //if (LineInfo[line + "N"].Count>1)
-                //        lbl_NBvia.Text += " + " + (LineInfo[line + "N"].Count-1).ToString();
-                //switch (LineInfo[line + "N"].Count)
-                //{
-                //    case 0:
-                //    case 1:
-                //        lbl_NBcount.Text = " ";
-                //        break;
-                //    case 2:
-                //        lbl_NBcount.Text =
-                //            src.GetStationInfo(LineInfo[line + "N"][1][LineInfo[line + "N"][1].Count - 1].Item2).Name;
-                //        break;
-                //    default:
-                //        lbl_NBcount.Text =
-                //                src.GetStationInfo(LineInfo[line + "N"][1][LineInfo[line + "N"][1].Count - 1].Item2).Name +
-                //                " +" + (LineInfo[line + "N"].Count - 2).ToString();
-                //        break;
-                //}
+                
                 lbl_NB.Alpha = (nfloat)1;
                 lbl_NBvia.Alpha = (nfloat)1;
             }
@@ -64,23 +45,7 @@ namespace MetroMate
                     lbl_SBvia.Text += src.GetStationInfo(ht[line + "S"][i]).Name +
 
                          ((i == ht[line + "S"].Count - 1) ? "" : "/");
-                //lbl_SB.Text = src.GetStationInfo(LineInfo[line + "S"][0][LineInfo[line + "S"][0].Count - 1].Item2).Name;
-                //switch (LineInfo[line + "S"].Count)
-                //{
-                //    case 0:
-                //    case 1:
-                //        lbl_SBcount.Text = " ";
-                //        break;
-                //    case 2:
-                //        lbl_SBcount.Text =
-                //            src.GetStationInfo(LineInfo[line + "S"][1][LineInfo[line + "S"][1].Count - 1].Item2).Name;
-                //        break;
-                //    default:
-                //        lbl_SBcount.Text =
-                //                src.GetStationInfo(LineInfo[line + "S"][1][LineInfo[line + "S"][1].Count - 1].Item2).Name +
-                //                " +" + (LineInfo[line + "S"].Count - 2).ToString();
-                //        break;
-                //}
+                
                 lbl_SB.Alpha = (nfloat)1;
                 lbl_SBvia.Alpha = (nfloat)1;
             }

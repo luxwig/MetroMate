@@ -33,16 +33,20 @@ namespace MetroMate
         [Name("parent_station")]
         public string Parents { get; set; }
 
+        [Name("serv_line")]
+        public string ServLine { get; set; }
+
         // Constructor 
         public StationInfo()
         {
-            ID = ""; Name = ""; Parents = "";
+            ID = ""; Name = ""; Parents = ""; ServLine = "";
         }
-        public StationInfo(string id, string name, string parents)
+        public StationInfo(string id, string name, string parents, string serv_line)
         {
             ID = id;
             Name = name;
             Parents = parents;
+            ServLine = serv_line;
         }
 
 
@@ -444,7 +448,7 @@ namespace MetroMate
 #if DEBUG
             public Dictionary<string, List<string>> transferMap;
 #else
-            private Dictionary<string, List<string>> transfer_map;
+            private Dictionary<string, List<string>> transferMap;
 #endif
             // Constructor
             public TransferComplexInfo(List<TransferInfo> infos)
@@ -485,7 +489,8 @@ namespace MetroMate
         private readonly Dictionary<char, UIColor> m_color_map;
         private readonly Dictionary<char, FeedIDInfo> m_feedid;
         private readonly Dictionary<string, string> m_feedid_inv;
-        
+        private readonly Dictionary<string, Dictionary<string, List<string>>>
+                                                    m_servline;
 
         // Constructor 
         public MTAInfo(string filename) : this(ToDict(filename)) { }
@@ -550,7 +555,15 @@ namespace MetroMate
                 foreach (JSONFeedInv j in jsonfeed)
                     m_feedid_inv[string.Format(m_URL[0] + m_URL[1], m_key, j.ID.ToString())] = j.Name;
             }
+
+            if (dict.ContainsKey("ServLine"))
+            {
+                string path = NSBundle.MainBundle.PathForResource(dict["ServLine"][0], "");
+                string text = System.IO.File.ReadAllText(path);
+                m_servline = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, List<string>>>>(text);
+            }
         }
+
 
         private static Dictionary<string, List<string>> ToDict(string Filename)
         {
@@ -619,13 +632,66 @@ namespace MetroMate
             if (m_station_map.ContainsKey(ID))
                 return m_station_map[ID];
             else
-                return new StationInfo("", "", "");
+                return new StationInfo("", "", "", "");
         }
         public string GetLineNameFromURL(string url)
         {
             if (m_feedid_inv.ContainsKey(url))
                 return m_feedid_inv[url];
             return "UNKNOWN";
+        }
+        public string GetServLine(string stopID)
+        {
+            return GetStationInfo(stopID).ServLine;
+        }
+        public Tuple<string, UIColor> GetServLineColor(string line)
+        {
+            string lineG = GetStationInfo(line).ServLine;
+            if (m_servline.ContainsKey(lineG))
+                if (m_servline[lineG]["Ext"][0].Length!=0)
+                    return Tuple.Create(m_servline[lineG]["Ext"][0], UIColor.White);
+                else
+                    return Tuple.Create("", GetLineColor(m_servline[lineG]["Line"][0][0]));
+            return Tuple.Create("", UIColor.White);
+        }
+    }
+    class RouteStationInfo
+    {
+        public int Count { get { return stationName.Count; } }
+        public List<int> StationCount { get { return stationCount; } }
+        public List<string> StationName { get { return StationName; } }
+        public List<StationType> SType { get { return stationType; } }
+        private  List<int> stationCount;
+        private  List<string> stationName;
+        private  List<StationType> stationType;
+
+        public Tuple<int, string, StationType> this[int i]
+        {
+            get { return Tuple.Create(stationCount[i], StationName[i], stationType[i]); }
+        }
+
+        public RouteStationInfo(List<Tuple<int, string>> Routes, MTAInfo src)
+        {
+            stationCount = new List<int>();
+            stationName = new List<string>();
+            stationType = new List<StationType>();
+            foreach (var r in Routes)
+            {
+                if (Count == 0)
+                    stationType.Add(StationType.TerminalA);
+                else
+                    if (string.Equals(src.GetServLine(stationName[Count - 1]),
+                                     src.GetServLine(r.Item2)))
+                    stationType.Add(StationType.Local);
+                else
+                {
+                    stationType[Count - 1] = StationType.TransferA;
+                    stationType.Add(StationType.TransferB);
+                }
+                stationName.Add(r.Item2);
+                stationCount.Add(r.Item1);
+            }
+            stationType[Count - 1] = StationType.TerminalX;
         }
     }
 
@@ -695,8 +761,8 @@ namespace MetroMate
                         foreach (TripInfo i in tripInfos)
                             if (i.Id.IndexOf('_') != -1 &&   // Find the line number
                                 i.Id[i.Id.IndexOf('_') + 1] == _LINE &&
-                                i.Id.IndexOf("..") != -1 && // Find the direction
-                                i.Id[i.Id.IndexOf("..") + 2] == _DIR &&
+                                i.Id.LastIndexOf(".") != -1 && // Find the direction
+                                i.Id[i.Id.LastIndexOf(".") + 1] == _DIR &&
                                 i.StopTime.Length > 0)
                             {
                                 bool exceptionFalg = false;

@@ -495,18 +495,24 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96511" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
-                                            <rect key="frame" x="20" y="11" width="273" height="21"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                         <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="96515">
-                                            <rect key="frame" x="304" y="25" width="100" height="5"/>
+                                            <rect key="frame" x="344" y="25" width="60" height="5"/>
                                             <constraints>
-                                                <constraint id="96517" firstAttribute="width" constant="100"/>
+                                                <constraint id="96517" firstAttribute="width" constant="60"/>
                                                 <constraint id="96518" firstAttribute="height" constant="5"/>
                                             </constraints>
                                         </progressView>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="111224" translatesAutoresizingMaskIntoConstraints="NO">
+                                            <rect key="frame" x="284" y="0.0" width="55" height="55"/>
+                                            <constraints>
+                                                <constraint id="115990" firstAttribute="width" secondItem="111224" secondAttribute="height" multiplier="1:1"/>
+                                            </constraints>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="96511" translatesAutoresizingMaskIntoConstraints="NO" misplaced="YES">
+                                            <rect key="frame" x="20" y="11" width="319" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17" weight="semibold"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint id="96519" firstItem="96511" firstAttribute="leading" secondItem="96516" secondAttribute="leading" constant="20"/>
@@ -515,6 +521,10 @@
                                         <constraint id="96522" firstAttribute="bottom" secondItem="96513" secondAttribute="bottom" constant="5"/>
                                         <constraint id="96523" firstAttribute="trailing" secondItem="96515" secondAttribute="trailing" constant="10"/>
                                         <constraint id="96524" firstItem="96515" firstAttribute="centerY" secondItem="96516" secondAttribute="centerY"/>
+                                        <constraint id="115633" firstItem="96515" firstAttribute="leading" secondItem="111224" secondAttribute="trailing" constant="5"/>
+                                        <constraint id="115672" firstAttribute="top" secondItem="111224" secondAttribute="top"/>
+                                        <constraint id="115673" firstAttribute="top" secondItem="111224" secondAttribute="top"/>
+                                        <constraint id="115834" firstAttribute="bottom" secondItem="111224" secondAttribute="bottom"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -522,6 +532,7 @@
                                     <outlet property="lbl_stopid" destination="96513" id="96512"/>
                                     <outlet property="bar_count" destination="96515" id="96514"/>
                                     <segue id="109762" destination="10682" kind="show" identifier="searchTrip"/>
+                                    <outlet property="imgViewer" destination="111224" id="name-outlet-111224"/>
                                 </connections>
                                 <color key="backgroundColor" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace" white="0" alpha="0"/>
                             </tableViewCell>

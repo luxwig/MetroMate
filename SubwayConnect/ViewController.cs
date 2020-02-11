@@ -21,7 +21,7 @@ namespace MetroMate
             base.ViewDidLoad();
             stationInfos = new List<StationInfo>
             {
-                new StationInfo("","","")
+                new StationInfo()
             };
             ArrTimeTable.Source = new StopSelTVS(stationInfos, mTAInfo);
             ArrTimeTable.RowHeight = 75;

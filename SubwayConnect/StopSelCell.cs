@@ -41,7 +41,7 @@ namespace MetroMate
         {
             txt_stopid.Text = txt_stopid.Text.ToUpper();
             lbl_stopname.Text = mTAInfo.GetStationInfo(txt_stopid.Text).Name;
-            TVS.stationInfos[ID] = new StationInfo(txt_stopid.Text, lbl_stopname.Text, "");
+            TVS.stationInfos[ID] = new StationInfo(txt_stopid.Text, lbl_stopname.Text, "","");
         }
 
         
